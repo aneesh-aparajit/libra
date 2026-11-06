@@ -1,4 +1,4 @@
-writ is a small, multi-tenant policy evaluation engine. a client sends an entity and an input, and writ returns allow or
+libra is a small, multi-tenant policy evaluation engine. a client sends an entity and an input, and libra returns allow or
 deny based on policies written as javascript functions.
 
 # problem
@@ -8,7 +8,7 @@ trail on why a request was denied, and temporary rules (a promo, a freeze window
 
 ## goals
 
-- decouple decisions from enforcement: services call `/evaluate` , and writ decides.
+- decouple decisions from enforcement: services call `/evaluate` , and libra decides.
 - generic policies: two JS functions per policy, `applies()`  and `evaluate()` .
 - evaluate all policies applicable to an entity together: every one must allow, and any deny or error means deny.
 - time-bound policies with automatic expiry.
@@ -17,9 +17,9 @@ trail on why a request was denied, and temporary rules (a promo, a freeze window
 
 ## non-goals
 
-- an rbac or authorization layer over writ itself. callers are trusted.
+- an rbac or authorization layer over libra itself. callers are trusted.
 - rego or any other declarative language.
-- storing entity data or domain membership. writ never interprets an identifier.
+- storing entity data or domain membership. libra never interprets an identifier.
 
 # concepts and data model
 
@@ -27,7 +27,7 @@ trail on why a request was denied, and temporary rules (a promo, a freeze window
 |--------|----------------------------------------------------------------------------------------------------------|
 | tenant | an organization, and the isolation boundary, every call is scoped within.                                |
 | domain | a scope of users within a tenant, e.g. `notification`                                                    |
-| entity | the identifier for the user, supplied by the client. writ doesn't care what it signifies for the client. |
+| entity | the identifier for the user, supplied by the client. libra doesn't care what it signifies for the client. |
 | policy | a rule targeted at a whole domain or at one entity.                                                      |
 
 ## targeting
@@ -136,7 +136,7 @@ capture that and return that to the user.
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>dev.writ</groupId>
+  <groupId>dev.libra</groupId>
   <artifactId>graaljs-demo</artifactId>
   <version>0.1.0</version>
 
@@ -167,7 +167,7 @@ capture that and return that to the user.
         <artifactId>exec-maven-plugin</artifactId>
         <version>3.5.0</version>
         <configuration>
-          <mainClass>dev.writ.GraalJsDemo</mainClass>
+          <mainClass>dev.libra.GraalJsDemo</mainClass>
         </configuration>
       </plugin>
     </plugins>
@@ -176,7 +176,7 @@ capture that and return that to the user.
 ```
 
 ```
-package dev.writ;
+package dev.libra;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -289,7 +289,7 @@ public class GraalJsDemo {
 ```
 apiVersion: batch/v1
 kind: CronJob
-metadata: { name: writ-sweeper }
+metadata: { name: libra-sweeper }
 spec:
   schedule: "0 * * * *"
   concurrencyPolicy: Forbid
@@ -303,8 +303,8 @@ spec:
               image: curlimages/curl
               env:
                 - name: TOKEN
-                  valueFrom: { secretKeyRef: { name: writ-internal, key: token } }
-              args: [ "-fsS", "-X", "POST", "-H", "Authorization: Bearer $(TOKEN)", "http://writ-server/internal/sweep" ]
+                  valueFrom: { secretKeyRef: { name: libra-internal, key: token } }
+              args: [ "-fsS", "-X", "POST", "-H", "Authorization: Bearer $(TOKEN)", "http://libra-server/internal/sweep" ]
 ```
 
 # api
@@ -452,7 +452,7 @@ errors: `400` compile error or failed example, `404` tenant or domain, `409` dup
 ### PUT /v1/tenants/{t}/domains/{d}/policies/by-key/{key}
 
 idempotent create-or-update used by the k8s operator. `{key}` is the policy `code`; `entity_id` comes from the body.
-same body as create, plus an optional `generation`; if writ has already applied that generation the call is a no-op.
+same body as create, plus an optional `generation`; if libra has already applied that generation the call is a no-op.
 
 request
 
@@ -539,7 +539,7 @@ response `200`
 
 ### POST /v1/tenants/{t}/domains/{d}/evaluate
 
-get a decision. writ loads the entity's own policies plus the domain's `*` policies, keeps those that are live and whose
+get a decision. libra loads the entity's own policies plus the domain's `*` policies, keeps those that are live and whose
 `applies()` returns true, and runs `evaluate()` on each. the result is `ALLOW` only if at least one policy applied and
 all of them allowed; any deny or error gives `DENY`.
 
@@ -604,5 +604,5 @@ response `200` `{ "status": "ok" }` when the service can reach the database; `50
 
 ### GET /metrics
 
-prometheus text format. includes `writ_decisions_total{tenant,domain,decision}`, `writ_policy_errors_total{policy_id}`
-and `writ_eval_seconds`.
+prometheus text format. includes `libra_decisions_total{tenant,domain,decision}`, `libra_policy_errors_total{policy_id}`
+and `libra_eval_seconds`.
