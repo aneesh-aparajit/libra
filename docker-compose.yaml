@@ -1,0 +1,25 @@
+version: '1'
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: libra-postgres
+    environment:
+      POSTGRES_DB: libra
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  redis:
+    image: redis:latest
+    container_name: libra-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:
