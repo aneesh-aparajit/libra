@@ -21,6 +21,21 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+  libra:
+    build: .
+    image: libra:local
+    container_name: libra-api
+    environment:
+      LIBRA_DB_URL: jdbc:postgresql://postgres:5432/libra
+      LIBRA_DB_USERNAME: postgres
+      LIBRA_DB_PASSWORD: postgres
+      LIBRA_REDIS_HOST: redis
+      LIBRA_REDIS_PORT: 6379
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
 
 volumes:
   postgres_data:
