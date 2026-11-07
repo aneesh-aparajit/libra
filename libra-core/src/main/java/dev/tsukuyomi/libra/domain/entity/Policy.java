@@ -18,8 +18,8 @@ public class Policy {
     private Long scopeID;
     private String entityID;
     private String code;
-    private String applied_js;
-    private String evaluated_js;
+    private String appliedJs;
+    private String evaluatedJs;
     private PolicyStatus status;
     private Long validFrom;
     private Long validTo;
@@ -35,7 +35,7 @@ public class Policy {
     }
 
     public String getJS(JsIdenfier identifier) {
-        return identifier == APPLIES ? applied_js : evaluated_js;
+        return identifier == APPLIES ? appliedJs : evaluatedJs;
     }
 
 }

@@ -78,8 +78,8 @@ public abstract class PostgresDAOTestBase {
                 .scopeID(scopeID)
                 .entityID(entityID)
                 .code("policy-" + entityID)
-                .applied_js("function applies(entity, ctx) { return true; }")
-                .evaluated_js("function evaluate(input, entity, ctx) { return true; }")
+                .appliedJs("function applies(entity, ctx) { return true; }")
+                .evaluatedJs("function evaluate(input, entity, ctx) { return true; }")
                 .status(PolicyStatus.ACTIVE)
                 .validFrom(0L);
     }

@@ -96,8 +96,8 @@ public class PolicyDAO extends BaseDAO {
                     policy.getScopeID(),
                     policy.getEntityID(),
                     policy.getCode(),
-                    policy.getApplied_js(),
-                    policy.getEvaluated_js(),
+                    policy.getAppliedJs(),
+                    policy.getEvaluatedJs(),
                     statusName(policy.getStatus()),
                     policy.getValidFrom(),
                     policy.getValidTo(),
@@ -175,8 +175,8 @@ public class PolicyDAO extends BaseDAO {
     public Optional<Policy> updatePolicy(Policy policy) {
         try {
             Object[] params = new Object[]{
-                    policy.getApplied_js(),
-                    policy.getEvaluated_js(),
+                    policy.getAppliedJs(),
+                    policy.getEvaluatedJs(),
                     statusName(policy.getStatus()),
                     policy.getValidFrom(),
                     policy.getValidTo(),

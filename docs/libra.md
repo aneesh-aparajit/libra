@@ -12,7 +12,8 @@ trail on why a request was denied, and temporary rules (a promo, a freeze window
 ## goals
 
 - decouple decisions from enforcement: services call `/evaluate` , and libra decides.
-- generic policies: two JS functions per policy, `applies()`  and `evaluate()` .
+- generic policies: two JS scripts per policy, an applicability check and the policy itself. each script defines an
+  `evaluate()` function.
 - evaluate all policies applicable to an entity together: every one must allow, and any deny or error means deny.
 - time-bound policies with automatic expiry.
 - explainable decisions: every response carries a trace.
@@ -42,11 +43,21 @@ trail on why a request was denied, and temporary rules (a promo, a freeze window
 
 ## function contract
 
-```
-function applies(entity, ctx) {        // entity = { id, attributes }; ctx = { now, tenant, scope }
+a policy holds two scripts, `applied_js` and `evaluate_js`. they run in separate contexts, and **each must define a
+top-level function named `evaluate`**: that is the only function the engine calls. a script with no `evaluate`
+function, or where `evaluate` is not callable, fails validation and the evaluation is an error (so `deny`).
+
+`applied_js`, whether the policy applies to this entity:
+
+```js
+function evaluate(entity, ctx) {        // entity = { id, attributes }; ctx = { now, tenant, scope }
     return entity.attributes.region === "eu";
 }
+```
 
+`evaluate_js`, whether the request is allowed:
+
+```js
 function evaluate(input, entity, ctx) { // input = request payload
     const hour = new Date(ctx.now).getUTCHours();
     return {allow: hour >= 8 && hour < 22, reason: "quiet hours"};
@@ -79,7 +90,7 @@ function evaluate(input, entity, ctx) { // input = request payload
 | `entity_id`   | string | to whom the policy is applied                                                                 |
 | `scope`       | string |                                                                                               |
 | `code`        | string | policy's name                                                                                 |
-| `applied_js`  | string | optional; defaults to true. `function applies(entity, ctx)`                                   |
+| `appliedJs`  | string | optional; defaults to true. `function evaluate(entity, ctx)` returns true if it applies       |
 | `evaluate_js` | string | `function evaluate(input, entity, ctx)` returns a boolean (true = allow) or `{allow, reason}` |
 | `status`      | enum   | ACTIVE; INACTIVE; EXPIRED                                                                     |
 | `valid_from`  | bigint | epoch time                                                                                    |

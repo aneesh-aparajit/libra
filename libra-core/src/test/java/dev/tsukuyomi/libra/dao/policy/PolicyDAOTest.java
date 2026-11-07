@@ -35,8 +35,8 @@ class PolicyDAOTest extends PostgresDAOTestBase {
                 .scopeID(p.getScopeID())
                 .entityID(p.getEntityID())
                 .code(p.getCode())
-                .applied_js(p.getApplied_js())
-                .evaluated_js(p.getEvaluated_js())
+                .appliedJs(p.getAppliedJs())
+                .evaluatedJs(p.getEvaluatedJs())
                 .status(p.getStatus())
                 .validFrom(p.getValidFrom())
                 .validTo(p.getValidTo())
@@ -60,8 +60,8 @@ class PolicyDAOTest extends PostgresDAOTestBase {
             assertThat(created.getScopeID()).isEqualTo(scopeID);
             assertThat(created.getEntityID()).isEqualTo("user-1");
             assertThat(created.getCode()).isEqualTo("policy-user-1");
-            assertThat(created.getApplied_js()).contains("applies");
-            assertThat(created.getEvaluated_js()).contains("evaluate");
+            assertThat(created.getAppliedJs()).contains("applies");
+            assertThat(created.getEvaluatedJs()).contains("evaluate");
             assertThat(created.getStatus()).isEqualTo(PolicyStatus.ACTIVE);
             assertThat(created.getValidFrom()).isEqualTo(100L);
             assertThat(created.getValidTo()).isEqualTo(200L);
@@ -84,18 +84,18 @@ class PolicyDAOTest extends PostgresDAOTestBase {
         @Test
         void allowsNullOptionalColumns() {
             Policy created = policyDAO.createPolicy(policyBuilder(tenantID, scopeID, "user-1")
-                    .applied_js(null)
+                    .appliedJs(null)
                     .validTo(null)
                     .build());
 
-            assertThat(created.getApplied_js()).isNull();
+            assertThat(created.getAppliedJs()).isNull();
             assertThat(created.getValidTo()).isNull();
         }
 
         @Test
         void missingEvaluateJsThrows() {
             assertThatThrownBy(() -> policyDAO.createPolicy(
-                    policyBuilder(tenantID, scopeID, "user-1").evaluated_js(null).build()))
+                    policyBuilder(tenantID, scopeID, "user-1").evaluatedJs(null).build()))
                     .isInstanceOf(LibraDAOException.class)
                     .hasMessage("error creating policy");
         }
@@ -243,8 +243,8 @@ class PolicyDAOTest extends PostgresDAOTestBase {
             Policy created = newPolicy(tenantID, scopeID, "user-1");
 
             Optional<Policy> updated = policyDAO.updatePolicy(copyOf(created)
-                    .applied_js(null)
-                    .evaluated_js("function evaluate() { return false; }")
+                    .appliedJs(null)
+                    .evaluatedJs("function evaluate() { return false; }")
                     .status(PolicyStatus.INACTIVE)
                     .validFrom(10L)
                     .validTo(20L)
@@ -252,8 +252,8 @@ class PolicyDAOTest extends PostgresDAOTestBase {
 
             assertThat(updated).hasValueSatisfying(p -> {
                 assertThat(p.getId()).isEqualTo(created.getId());
-                assertThat(p.getApplied_js()).isNull();
-                assertThat(p.getEvaluated_js()).isEqualTo("function evaluate() { return false; }");
+                assertThat(p.getAppliedJs()).isNull();
+                assertThat(p.getEvaluatedJs()).isEqualTo("function evaluate() { return false; }");
                 assertThat(p.getStatus()).isEqualTo(PolicyStatus.INACTIVE);
                 assertThat(p.getValidFrom()).isEqualTo(10L);
                 assertThat(p.getValidTo()).isEqualTo(20L);
@@ -312,7 +312,7 @@ class PolicyDAOTest extends PostgresDAOTestBase {
             assertThat(updated).hasValueSatisfying(p -> {
                 assertThat(p.getStatus()).isEqualTo(PolicyStatus.INACTIVE);
                 assertThat(p.getVersion()).isEqualTo(2L);
-                assertThat(p.getEvaluated_js()).isEqualTo(created.getEvaluated_js());
+                assertThat(p.getEvaluatedJs()).isEqualTo(created.getEvaluatedJs());
             });
         }
 

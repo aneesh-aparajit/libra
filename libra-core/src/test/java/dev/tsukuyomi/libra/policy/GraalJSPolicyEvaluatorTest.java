@@ -30,8 +30,8 @@ class GraalJSPolicyEvaluatorTest {
                 .scopeID(20L)
                 .entityID("user-1")
                 .code("credit-limit")
-                .applied_js(appliesJs)
-                .evaluated_js(policyJs)
+                .appliedJs(appliesJs)
+                .evaluatedJs(policyJs)
                 .status(PolicyStatus.ACTIVE)
                 .version(1L)
                 .build();

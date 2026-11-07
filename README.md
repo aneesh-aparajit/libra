@@ -10,14 +10,19 @@ policies written as plain javascript functions.
 - **tenant**: an organization, and the boundary every call is scoped within.
 - **scope**: a group of users within a tenant, e.g. `notification`.
 - **entity**: an opaque identifier supplied by the client.
-- **policy**: a pair of js functions, targeted at a whole scope (`*`) or at one entity.
+- **policy**: a pair of js scripts, targeted at a whole scope (`*`) or at one entity. each script must define a
+  function named `evaluate`.
 
 ```js
-function applies(entity, ctx) {          // optional, defaults to true
+// applied_js: does this policy apply? optional, defaults to true
+function evaluate(entity, ctx) {
     return entity.attributes.region === "eu";
 }
+```
 
-function evaluate(input, entity, ctx) {   // true / false, or { allow, reason }
+```js
+// evaluate_js: allow or deny. true / false, or { allow, reason }
+function evaluate(input, entity, ctx) {
     const hour = new Date(ctx.now).getUTCHours();
     return { allow: hour >= 8 && hour < 22, reason: "quiet hours" };
 }

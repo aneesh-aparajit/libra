@@ -44,8 +44,8 @@ class PolicyRowMapperTest {
                 .scopeID(3L)
                 .entityID("user-1")
                 .code("no-sms-after-22")
-                .applied_js("function applies(){return true;}")
-                .evaluated_js("function evaluate(){return true;}")
+                .appliedJs("function applies(){return true;}")
+                .evaluatedJs("function evaluate(){return true;}")
                 .status(PolicyStatus.ACTIVE)
                 .validFrom(100L)
                 .validTo(200L)
@@ -63,7 +63,7 @@ class PolicyRowMapperTest {
 
         Policy policy = mapper.mapRow(FakeResultSet.of(row), 0);
 
-        assertThat(policy.getApplied_js()).isNull();
+        assertThat(policy.getAppliedJs()).isNull();
         assertThat(policy.getValidTo()).isNull();
         // a NULL read must not leak into the next column's wasNull()
         assertThat(policy.getVersion()).isEqualTo(2L);
