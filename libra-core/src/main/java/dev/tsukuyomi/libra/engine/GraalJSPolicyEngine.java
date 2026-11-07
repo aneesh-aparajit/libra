@@ -1,4 +1,4 @@
-package dev.tsukuyomi.libra.policy;
+package dev.tsukuyomi.libra.engine;
 
 import dev.tsukuyomi.libra.domain.entity.Policy;
 import dev.tsukuyomi.libra.domain.enums.JsIdenfier;
@@ -21,9 +21,9 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
-public class GraalJSPolicyEvaluator implements IPolicyEvaluator, AutoCloseable {
+public class GraalJSPolicyEngine implements IPolicyEngine, AutoCloseable {
 
-    private static final Logger logger = LoggerFactory.getLogger(GraalJSPolicyEvaluator.class);
+    private static final Logger logger = LoggerFactory.getLogger(GraalJSPolicyEngine.class);
 
     private static final Engine ENGINE = Engine.newBuilder("js")
             .option("engine.WarnInterpreterOnly", "false")

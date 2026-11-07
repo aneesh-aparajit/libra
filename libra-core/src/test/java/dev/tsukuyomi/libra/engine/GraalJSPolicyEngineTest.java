@@ -1,4 +1,4 @@
-package dev.tsukuyomi.libra.policy;
+package dev.tsukuyomi.libra.engine;
 
 import dev.tsukuyomi.libra.domain.entity.Policy;
 import dev.tsukuyomi.libra.domain.enums.JsIdenfier;
@@ -18,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
-class GraalJSPolicyEvaluatorTest {
+class GraalJSPolicyEngineTest {
 
     // NOTE: never call evaluator.close() here — it closes the static, shared ENGINE.
-    private final GraalJSPolicyEvaluator evaluator = new GraalJSPolicyEvaluator();
+    private final GraalJSPolicyEngine evaluator = new GraalJSPolicyEngine();
 
     private static Policy policy(String appliesJs, String policyJs) {
         return Policy.builder()

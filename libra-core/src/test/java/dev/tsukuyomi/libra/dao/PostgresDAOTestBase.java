@@ -14,17 +14,20 @@ import dev.tsukuyomi.libra.domain.entity.Policy;
 import dev.tsukuyomi.libra.domain.entity.Scope;
 import dev.tsukuyomi.libra.domain.entity.Tenant;
 import dev.tsukuyomi.libra.domain.enums.PolicyStatus;
-import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.postgresql.ds.PGSimpleDataSource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
- * runs DAOs against a real postgres (testcontainers) with the flyway migrations applied.
+ * runs DAOs against a real postgres (testcontainers) with db/schema.sql applied.
  * one container is shared by every DAO test class; tables are truncated before each test.
  */
 public abstract class PostgresDAOTestBase {
@@ -40,11 +43,17 @@ public abstract class PostgresDAOTestBase {
         ds.setUser(POSTGRES.getUsername());
         ds.setPassword(POSTGRES.getPassword());
         DATA_SOURCE = ds;
-        Flyway.configure()
-                .dataSource(DATA_SOURCE)
-                .locations("classpath:db/migration")
-                .load()
-                .migrate();
+        // executed as a single statement: the script contains a dollar-quoted plpgsql body,
+        // which statement splitters (ScriptUtils) would break apart on ';'
+        new JdbcTemplate(DATA_SOURCE).execute(loadSchema());
+    }
+
+    private static String loadSchema() {
+        try {
+            return new ClassPathResource("db/schema.sql").getContentAsString(StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            throw new UncheckedIOException("could not read db/schema.sql", ex);
+        }
     }
 
     protected final JdbcTemplate jdbc = new JdbcTemplate(DATA_SOURCE);

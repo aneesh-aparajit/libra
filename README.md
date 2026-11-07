@@ -33,7 +33,7 @@ evaluation is recorded in `policy_evaluations` for auditing.
 
 ## stack
 
-java 21 · spring boot 4 · postgresql + flyway · graaljs · gson
+java 21 · spring boot 4 · postgresql · graaljs · gson
 
 ## layout
 
@@ -53,5 +53,12 @@ docker compose up -d postgres
 mvn clean install
 ```
 
-the app reads `LIBRA_DB_URL`, `LIBRA_DB_USERNAME` and `LIBRA_DB_PASSWORD` (defaults match `docker-compose.yaml`), and
-flyway applies the schema on startup.
+the app reads `LIBRA_DB_URL`, `LIBRA_DB_USERNAME`, `LIBRA_DB_PASSWORD`, `LIBRA_REDIS_HOST`, `LIBRA_REDIS_PORT` and
+`LIBRA_REDIS_PASSWORD` (defaults match `docker-compose.yaml`). `GET /healthz` reports postgres and redis health and
+returns 503 if either is down.
+the schema lives in `libra-core/src/main/resources/db/schema.sql`; docker compose applies it when the postgres volume
+is first created. for an existing database, apply it by hand:
+
+```bash
+psql -h localhost -U postgres -d libra -f libra-core/src/main/resources/db/schema.sql
+```

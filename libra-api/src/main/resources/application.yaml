@@ -5,5 +5,22 @@ spring:
     url: ${LIBRA_DB_URL:jdbc:postgresql://localhost:5432/libra}
     username: ${LIBRA_DB_USERNAME:postgres}
     password: ${LIBRA_DB_PASSWORD:postgres}
-  flyway:
-    locations: classpath:db/migration
+  data:
+    redis:
+      host: ${LIBRA_REDIS_HOST:localhost}
+      port: ${LIBRA_REDIS_PORT:6379}
+      password: ${LIBRA_REDIS_PASSWORD:}
+      timeout: 2s
+
+management:
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: health
+      path-mapping:
+        health: healthz
+  endpoint:
+    health:
+      show-components: always
+      show-details: never
