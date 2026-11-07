@@ -2,6 +2,7 @@ package dev.tsukuyomi.libra.dao.policy_evaluation;
 
 import dev.tsukuyomi.libra.domain.entity.PolicyEvaluation;
 import dev.tsukuyomi.libra.domain.enums.EvaluationResult;
+import org.jspecify.annotations.NonNull;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +19,7 @@ import static dev.tsukuyomi.libra.utils.JdbcUtil.getString;
 public class PolicyEvaluationRowMapper implements RowMapper<PolicyEvaluation> {
 
     @Override
-    public PolicyEvaluation mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public PolicyEvaluation mapRow(@NonNull ResultSet rs, int rowNum) throws SQLException {
         return PolicyEvaluation.builder()
                 .id(getLong(rs, ID))
                 .requestID(getString(rs, REQUEST_ID))

@@ -18,6 +18,7 @@ create table if not exists "scopes" (
     primary key (id),
     constraint fk__scopes_tenants_id foreign key (tenant_id) references tenants(id)
 );
+alter table scopes add constraint unq__tenant_scope_name unique (tenant_id, scope_name);
 create index if not exists idx__scopes_tenant_id on scopes(tenant_id);
 create index if not exists idx__scopes_scope_name on scopes(scope_name);
 
@@ -39,6 +40,7 @@ create table if not exists "policies" (
     constraint fk__policies_tenants_id foreign key (tenant_id) references tenants(id),
     constraint fk__policies_scopes_id foreign key (scope_id) references scopes(id)
 );
+alter table policies add constraint unq__tenant_scope_entity unique (tenant_id, scope_id, entity_id);
 create index if not exists idx__policies_tenant_id on policies(tenant_id);
 create index if not exists idx__policies_scope_id on policies(scope_id);
 create index if not exists idx__policies_entity_id on policies(entity_id);

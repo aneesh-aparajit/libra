@@ -33,6 +33,7 @@ public class Constants {
         private PolicyDAOConstants() {
         }
 
+        public static final String ALL_ENTITIES = "*";
         public static final String TABLE_NAME = "policies";
         public static final String ID = "id";
         public static final String TENANT_ID = "tenant_id";

@@ -1,6 +1,7 @@
 package dev.tsukuyomi.libra.dao.tenant;
 
 import dev.tsukuyomi.libra.domain.entity.Tenant;
+import org.jspecify.annotations.NonNull;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ import static dev.tsukuyomi.libra.utils.JdbcUtil.getString;
 public class TenantRowMapper implements RowMapper<Tenant> {
 
     @Override
-    public Tenant mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public Tenant mapRow(@NonNull ResultSet rs, int rowNum) throws SQLException {
         return Tenant.builder()
                 .id(getLong(rs, ID))
                 .tenantCode(getString(rs, TENANT_CODE))

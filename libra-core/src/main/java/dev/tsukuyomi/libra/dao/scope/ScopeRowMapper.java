@@ -1,6 +1,7 @@
 package dev.tsukuyomi.libra.dao.scope;
 
 import dev.tsukuyomi.libra.domain.entity.Scope;
+import org.jspecify.annotations.NonNull;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ import static dev.tsukuyomi.libra.utils.JdbcUtil.getString;
 public class ScopeRowMapper implements RowMapper<Scope> {
 
     @Override
-    public Scope mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public Scope mapRow(@NonNull ResultSet rs, int rowNum) throws SQLException {
         return Scope.builder()
                 .id(getLong(rs, ID))
                 .tenantID(getLong(rs, TENANT_ID))
