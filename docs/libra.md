@@ -19,28 +19,28 @@ trail on why a request was denied, and temporary rules (a promo, a freeze window
 
 - an rbac or authorization layer over libra itself. callers are trusted.
 - rego or any other declarative language.
-- storing entity data or domain membership. libra never interprets an identifier.
+- storing entity data or scope membership. libra never interprets an identifier.
 
 # concepts and data model
 
 | notion | what it is                                                                                               |
 |--------|----------------------------------------------------------------------------------------------------------|
 | tenant | an organization, and the isolation boundary, every call is scoped within.                                |
-| domain | a scope of users within a tenant, e.g. `notification`                                                    |
+| scope  | a group of users within a tenant, e.g. `notification`                                                    |
 | entity | the identifier for the user, supplied by the client. libra doesn't care what it signifies for the client. |
-| policy | a rule targeted at a whole domain or at one entity.                                                      |
+| policy | a rule targeted at a whole scope or at one entity.                                                       |
 
 ## targeting
 
-| tenant_id | domain       | identifier       | applies to                                                            |
+| tenant_id | scope        | identifier       | applies to                                                            |
 |-----------|--------------|------------------|-----------------------------------------------------------------------|
-| 1         | notification | *                | every user of the notification domain within tenant 1.                |
+| 1         | notification | *                | every user of the notification scope within tenant 1.                 |
 | 1         | notification | account-holder-1 | only applicable to account-holder-1 of tenant 1's notification scope. |
 
 ## function contract
 
 ```
-function applies(entity, ctx) {        // entity = { id, attributes }; ctx = { now, tenant, domain }
+function applies(entity, ctx) {        // entity = { id, attributes }; ctx = { now, tenant, scope }
     return entity.attributes.region === "eu";
 }
 
@@ -74,7 +74,7 @@ function evaluate(input, entity, ctx) { // input = request payload
 | `id`          | string | BIGSERIAL; autoincrement; pkey.                                                               |
 | `tenant_id`   | string | owner scope.                                                                                  |
 | `entity_id`   | string | to whom the policy is applied                                                                 |
-| `domain`      | string |                                                                                               |
+| `scope`       | string |                                                                                               |
 | `code`        | string | policy's name                                                                                 |
 | `applied_js`  | string | optional; defaults to true. `function applies(entity, ctx)`                                   |
 | `evaluate_js` | string | `function evaluate(input, entity, ctx)` returns a boolean (true = allow) or `{allow, reason}` |
@@ -90,12 +90,12 @@ function evaluate(input, entity, ctx) { // input = request payload
     - index (code)
     - index (entity_id)
 
-## executions - audit
+## policy_evaluations - audit
 
 | field         | type      | notes                                                                       |
 |---------------|-----------|-----------------------------------------------------------------------------|
 | `id`          | bigserial |                                                                             |
-| `request_id`  | string    | an execution id returned along with the evaluate response for traceability. |
+| `request_id`  | string    | an evaluation id returned along with the evaluate response for traceability. |
 | `policy_id`   | bigint    |                                                                             |
 | `input_attrs` | jsonb     | the input passed                                                            |
 | `result`      | enum      | DENY; ALLOW;                                                                |
@@ -106,7 +106,7 @@ function evaluate(input, entity, ctx) { // input = request payload
 # policy evaluation
 
 an "entity" could have two types policies that can be applied to him. one is the entity level policy which the clients
-could create. apart from from that there are also domain level policies.
+could create. apart from from that there are also scope level policies.
 
 ```sql
 select 
@@ -116,7 +116,7 @@ from
 where
   entity_id in ('*', ':entity_id')
   and status = 'ACTIVE'
-  and domain = 'payment.credit'
+  and scope = 'payment.credit'
   and tenant_id = 1;
 ```
 
@@ -312,23 +312,23 @@ spec:
 | <u>**Method**</u>                    | <u>**Path**</u>                                            | <u>**Purpose**</u>                                                                                                                                        |
 |--------------------------------------|------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `<u>POST</u>`                        | `<u>/v1/tenants</u>`                                       | <u>Create a tenant</u>                                                                                                                                    |
-| `<u>POST</u>`                        | `<u>/v1/tenants/{t}/domains</u>`                           | <u>Create a domain</u>                                                                                                                                    |
-| `<u>GET</u>`<u> / </u>`<u>PATCH</u>` | `<u>/v1/tenants/{t}/domains/{d}</u>`                       | <u>Read or update a domain</u>                                                                                                                            |
-| `<u>POST</u>`                        | `<u>/v1/tenants/{t}/domains/{d}/policies</u>`              | <u>Create a policy with its </u>`<u>identifier</u>`<u> (</u>`<u>*</u>`<u> or an entity ID). Compiles the code and runs the optional </u>`<u>examples</u>` |
-| `<u>PUT</u>`                         | `<u>/v1/tenants/{t}/domains/{d}/policies/by-key/{key}</u>` | <u>Idempotent upsert by external key (used by the operator)</u>                                                                                           |
-| `<u>GET</u>`                         | `<u>/v1/tenants/{t}/domains/{d}/policies</u>`              | <u>List policies, filterable by </u>`<u>identifier</u>`<u> and </u>`<u>status</u>`                                                                        |
+| `<u>POST</u>`                        | `<u>/v1/tenants/{t}/scopes</u>`                            | <u>Create a scope</u>                                                                                                                                     |
+| `<u>GET</u>`<u> / </u>`<u>PATCH</u>` | `<u>/v1/tenants/{t}/scopes/{s}</u>`                        | <u>Read or update a scope</u>                                                                                                                             |
+| `<u>POST</u>`                        | `<u>/v1/tenants/{t}/scopes/{s}/policies</u>`               | <u>Create a policy with its </u>`<u>identifier</u>`<u> (</u>`<u>*</u>`<u> or an entity ID). Compiles the code and runs the optional </u>`<u>examples</u>` |
+| `<u>PUT</u>`                         | `<u>/v1/tenants/{t}/scopes/{s}/policies/by-key/{key}</u>`  | <u>Idempotent upsert by external key (used by the operator)</u>                                                                                           |
+| `<u>GET</u>`                         | `<u>/v1/tenants/{t}/scopes/{s}/policies</u>`               | <u>List policies, filterable by </u>`<u>identifier</u>`<u> and </u>`<u>status</u>`                                                                        |
 | `<u>GET</u>`<u> / </u>`<u>PATCH</u>` | `<u>/v1/tenants/{t}/policies/{id}</u>`                     | <u>Read or update a policy. </u>`<u>PATCH</u>`<u> bumps </u>`<u>version</u>`                                                                              |
 | `<u>POST</u>`                        | `<u>/v1/tenants/{t}/policies/{id}/deactivate</u>`          | <u>Soft disable</u>                                                                                                                                       |
 | `<u>POST</u>`                        | `<u>/v1/tenants/{t}/policies/{id}/reactivate</u>`          | <u>Restore an inactive or expired policy</u>                                                                                                              |
 | `<u>POST</u>`                        | `<u>/v1/tenants/{t}/policies/{id}/test</u>`                | <u>Dry-run against a sample entity and input. Nothing is stored</u>                                                                                       |
-| `<u>POST</u>`                        | `<u>/v1/tenants/{t}/domains/{d}/evaluate</u>`              | <u>Get a decision</u>                                                                                                                                     |
+| `<u>POST</u>`                        | `<u>/v1/tenants/{t}/scopes/{s}/evaluate</u>`               | <u>Get a decision</u>                                                                                                                                     |
 | `<u>POST</u>`                        | `<u>/internal/sweep</u>`                                   | <u>Mark expired policies (internal only)</u>                                                                                                              |
 | `<u>GET</u>`                         | `<u>/healthz</u>`<u>, </u>`<u>/metrics</u>`                | <u>Liveness and Prometheus metrics</u>                                                                                                                    |
 
 ## api specs
 
-all endpoints take and return `application/json`. timestamps are epoch milliseconds. `{t}` is the tenant id, `{d}` the
-domain code, `{id}` the policy id. callers are trusted, so there is no auth on public endpoints; `/internal/sweep`
+all endpoints take and return `application/json`. timestamps are epoch milliseconds. `{t}` is the tenant id, `{s}` the
+scope code, `{id}` the policy id. callers are trusted, so there is no auth on public endpoints; `/internal/sweep`
 requires `Authorization: Bearer <token>`.
 
 **error format** (every 4xx / 5xx)
@@ -346,7 +346,7 @@ requires `Authorization: Bearer <token>`.
 | status | when                                                                                     |
 |--------|------------------------------------------------------------------------------------------|
 | 400    | invalid body, js that doesn't compile, `entity.id = "*"` on evaluate, failing `examples` |
-| 404    | tenant, domain or policy not found                                                       |
+| 404    | tenant, scope or policy not found                                                        |
 | 409    | duplicate `code`, or `version` mismatch on update                                        |
 | 413    | body over 64 KB                                                                          |
 | 500    | unexpected server error                                                                  |
@@ -369,9 +369,9 @@ response `201`
 
 errors: `400` missing fields, `409` tenant_code already exists.
 
-### POST /v1/tenants/{t}/domains
+### POST /v1/tenants/{t}/scopes
 
-create a domain within a tenant.
+create a scope within a tenant.
 
 request
 
@@ -385,9 +385,9 @@ response `201`
 { "tenant_id": 1, "code": "notification", "description": "outbound notifications", "created_at": 1793900000000 }
 ```
 
-errors: `404` tenant, `409` domain code already exists in this tenant.
+errors: `404` tenant, `409` scope code already exists in this tenant.
 
-### GET /v1/tenants/{t}/domains/{d}
+### GET /v1/tenants/{t}/scopes/{s}
 
 response `200`
 
@@ -395,7 +395,7 @@ response `200`
 { "tenant_id": 1, "code": "notification", "description": "outbound notifications", "policy_count": 12, "created_at": 1793900000000, "updated_at": 1793900000000 }
 ```
 
-### PATCH /v1/tenants/{t}/domains/{d}
+### PATCH /v1/tenants/{t}/scopes/{s}
 
 request (any subset)
 
@@ -403,9 +403,9 @@ request (any subset)
 { "description": "sms, email and push notifications" }
 ```
 
-response `200`: the updated domain.
+response `200`: the updated scope.
 
-### POST /v1/tenants/{t}/domains/{d}/policies
+### POST /v1/tenants/{t}/scopes/{s}/policies
 
 create a policy. both functions are compiled before saving; if `examples` are given, each must produce the expected
 result or the policy is rejected.
@@ -428,8 +428,8 @@ request
 
 | field         | required | notes                                                |
 |---------------|----------|------------------------------------------------------|
-| `code`        | yes      | policy name, unique per tenant, domain and entity_id |
-| `entity_id`   | yes      | `*` for the whole domain, or one entity id           |
+| `code`        | yes      | policy name, unique per tenant, scope and entity_id  |
+| `entity_id`   | yes      | `*` for the whole scope, or one entity id            |
 | `applied_js`  | no       | defaults to always applies                           |
 | `evaluate_js` | yes      |                                                      |
 | `valid_from`  | no       | defaults to now                                      |
@@ -440,16 +440,16 @@ response `201`
 
 ```
 {
-  "id": 42, "tenant_id": 1, "domain": "notification", "entity_id": "*", "code": "quiet-hours",
+  "id": 42, "tenant_id": 1, "scope": "notification", "entity_id": "*", "code": "quiet-hours",
   "status": "ACTIVE", "effective_status": "ACTIVE",
   "valid_from": 1793900000000, "valid_till": 1796500000000,
   "version": 1, "created_at": 1793900000000, "updated_at": 1793900000000
 }
 ```
 
-errors: `400` compile error or failed example, `404` tenant or domain, `409` duplicate code.
+errors: `400` compile error or failed example, `404` tenant or scope, `409` duplicate code.
 
-### PUT /v1/tenants/{t}/domains/{d}/policies/by-key/{key}
+### PUT /v1/tenants/{t}/scopes/{s}/policies/by-key/{key}
 
 idempotent create-or-update used by the k8s operator. `{key}` is the policy `code`; `entity_id` comes from the body.
 same body as create, plus an optional `generation`; if libra has already applied that generation the call is a no-op.
@@ -462,9 +462,9 @@ request
 
 response `200` updated or unchanged, `201` created; body is the policy.
 
-### GET /v1/tenants/{t}/domains/{d}/policies
+### GET /v1/tenants/{t}/scopes/{s}/policies
 
-list policies in a domain.
+list policies in a scope.
 
 query params
 | param | notes |
@@ -521,7 +521,7 @@ errors: `400` if `valid_till` would still be in the past.
 
 ### POST /v1/tenants/{t}/policies/{id}/test
 
-dry-run one policy. nothing is stored and no execution row is written.
+dry-run one policy. nothing is stored and no policy_evaluations row is written.
 
 request
 
@@ -537,9 +537,9 @@ response `200`
 { "applies": true, "result": "DENY", "reason": "quiet hours", "error": null, "duration_ms": 3 }
 ```
 
-### POST /v1/tenants/{t}/domains/{d}/evaluate
+### POST /v1/tenants/{t}/scopes/{s}/evaluate
 
-get a decision. libra loads the entity's own policies plus the domain's `*` policies, keeps those that are live and whose
+get a decision. libra loads the entity's own policies plus the scope's `*` policies, keeps those that are live and whose
 `applies()` returns true, and runs `evaluate()` on each. the result is `ALLOW` only if at least one policy applied and
 all of them allowed; any deny or error gives `DENY`.
 
@@ -575,14 +575,14 @@ response `200`
 
 | field         | notes                                                                                    |
 |---------------|------------------------------------------------------------------------------------------|
-| `request_id`  | id of the execution rows written to `executions`, for audit lookups                      |
+| `request_id`  | id of the rows written to `policy_evaluations`, for audit lookups                        |
 | `evaluated`   | number of policies that applied                                                          |
 | `violations`  | every policy that denied or errored; empty on `ALLOW`                                    |
 | `trace`       | every candidate policy, including ones that didn't apply                                 |
 | `valid_until` | earliest `valid_till` among applied policies; a client may cache the decision until then |
 
 if no policy applies, the response is `DENY` with `evaluated: 0` and an empty `violations` list.
-errors: `400` missing entity or `entity.id = "*"`, `404` tenant or domain, `413` body too large.
+errors: `400` missing entity or `entity.id = "*"`, `404` tenant or scope, `413` body too large.
 
 ### POST /internal/sweep
 
@@ -604,5 +604,5 @@ response `200` `{ "status": "ok" }` when the service can reach the database; `50
 
 ### GET /metrics
 
-prometheus text format. includes `libra_decisions_total{tenant,domain,decision}`, `libra_policy_errors_total{policy_id}`
+prometheus text format. includes `libra_decisions_total{tenant,scope,decision}`, `libra_policy_errors_total{policy_id}`
 and `libra_eval_seconds`.

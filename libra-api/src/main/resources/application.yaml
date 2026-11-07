@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: libra
+  datasource:
+    url: ${LIBRA_DB_URL:jdbc:postgresql://localhost:5432/libra}
+    username: ${LIBRA_DB_USERNAME:postgres}
+    password: ${LIBRA_DB_PASSWORD:postgres}
+  flyway:
+    locations: classpath:db/migration
