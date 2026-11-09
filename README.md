@@ -10,22 +10,22 @@ policies written as plain javascript functions.
 
 - **tenant**: an organization, and the boundary every call is scoped within.
 - **scope**: a group of users within a tenant, e.g. `notification`.
-- **entity**: an opaque identifier supplied by the client.
+- **entity**: an opaque identifier supplied by the client. libra stores no attributes for it; policies decide from
+  the request's `inputAttrs`.
 - **policy**: a pair of js scripts, targeted at a whole scope (`*`) or at one entity. each script must define a
   function named `evaluate`.
 
 ```js
-// applied_js: does this policy apply? optional, defaults to true
-function evaluate(entity, ctx) {
-    return entity.attributes.region === "eu";
+// applied_js: does this policy apply to this request? optional, defaults to true
+function evaluate(input) {
+    return input.channel === "sms";
 }
 ```
 
 ```js
-// evaluate_js: allow or deny. true / false, or { allow, reason }
-function evaluate(input, entity, ctx) {
-    const hour = new Date(ctx.now).getUTCHours();
-    return {allow: hour >= 8 && hour < 22, reason: "quiet hours"};
+// evaluate_js: allow or deny. returns true / false
+function evaluate(input) {
+    return input.amount <= 100;
 }
 ```
 

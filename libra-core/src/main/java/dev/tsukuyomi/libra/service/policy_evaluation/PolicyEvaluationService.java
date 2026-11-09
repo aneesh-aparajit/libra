@@ -23,6 +23,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
 
+import static org.springframework.util.StringUtils.hasText;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -84,7 +86,8 @@ public class PolicyEvaluationService implements IPolicyEvaluationService {
 
     private CompletableFuture<PolicyEvaluationResultDTO> evaluatePolicy(Policy policy, String inputAttrs) {
         return CompletableFuture.supplyAsync(() -> {
-                    if (!Boolean.TRUE.equals(policyEngine.evaluate(policy, JsIdenfier.APPLIES, inputAttrs))) {
+                    if (hasText(policy.getAppliedJs())
+                            && !Boolean.TRUE.equals(policyEngine.evaluate(policy, JsIdenfier.APPLIES, inputAttrs))) {
                         return null;
                     }
                     boolean allowed = Boolean.TRUE.equals(policyEngine.evaluate(policy, JsIdenfier.POLICY, inputAttrs));

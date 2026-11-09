@@ -21,6 +21,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -59,6 +62,8 @@ class PolicyEvaluationServiceTest {
     private static final String ENTITY_ID = "user-1";
     private static final Map<String, Object> INPUT_ATTRS = Map.of("amount", 50L, "limit", 100L);
     private static final String INPUT_JSON = JsonUtil.toJson(INPUT_ATTRS);
+    // the engine is mocked, so the script body is never run; it only needs to be non-blank
+    private static final String APPLIED_JS = "function evaluate(input) { return true; }";
 
     @Mock
     private IPolicyService policyService;
@@ -73,12 +78,17 @@ class PolicyEvaluationServiceTest {
     private PolicyEvaluationService evaluationService;
 
     private static Policy policy(Long id, String code) {
+        return policy(id, code, APPLIED_JS);
+    }
+
+    private static Policy policy(Long id, String code, String appliedJs) {
         return Policy.builder()
                 .id(id)
                 .tenantID(TENANT_ID)
                 .scopeID(SCOPE_ID)
                 .entityID(ENTITY_ID)
                 .code(code)
+                .appliedJs(appliedJs)
                 .status(PolicyStatus.ACTIVE)
                 .validFrom(100L)
                 .version(1L)
@@ -219,7 +229,7 @@ class PolicyEvaluationServiceTest {
     void resultIdentifiersComeFromPolicyNotRequest() {
         Policy tenantWide = Policy.builder()
                 .id(21L).tenantID(TENANT_ID).scopeID(SCOPE_ID).entityID(null).code("tenant-default")
-                .status(PolicyStatus.ACTIVE).version(1L).build();
+                .appliedJs(APPLIED_JS).status(PolicyStatus.ACTIVE).version(1L).build();
         givenApplicablePolicies(tenantWide);
         givenEngine(tenantWide, JsIdenfier.APPLIES, true);
         givenEngine(tenantWide, JsIdenfier.POLICY, true);
@@ -340,6 +350,86 @@ class PolicyEvaluationServiceTest {
         assertThat(evaluationService.evaluatePoliciesForUser(request()).join())
                 .extracting(PolicyEvaluationResultDTO::getResult)
                 .containsExactly(EvaluationResult.DENY);
+    }
+
+    @Nested
+    class WithoutAppliedJs {
+
+        @ParameterizedTest(name = "appliedJs = [{0}]")
+        @NullAndEmptySource
+        @ValueSource(strings = {" ", "\t", "\n  "})
+        void skipsAppliesCheckAndAllows(String appliedJs) {
+            Policy p = policy(11L, "credit-limit", appliedJs);
+            givenApplicablePolicies(p);
+            givenEngine(p, JsIdenfier.POLICY, true);
+
+            assertThat(evaluationService.evaluatePoliciesForUser(request()).join())
+                    .extracting(PolicyEvaluationResultDTO::getPolicyCode, PolicyEvaluationResultDTO::getResult)
+                    .containsExactly(tuple("credit-limit", EvaluationResult.ALLOW));
+            verify(policyEngine, never()).evaluate(any(), eq(JsIdenfier.APPLIES), anyString());
+        }
+
+        @ParameterizedTest(name = "appliedJs = [{0}]")
+        @NullAndEmptySource
+        @ValueSource(strings = {" "})
+        void skipsAppliesCheckAndDenies(String appliedJs) {
+            Policy p = policy(11L, "credit-limit", appliedJs);
+            givenApplicablePolicies(p);
+            givenEngine(p, JsIdenfier.POLICY, false);
+
+            assertThat(evaluationService.evaluatePoliciesForUser(request()).join())
+                    .extracting(PolicyEvaluationResultDTO::getResult)
+                    .containsExactly(EvaluationResult.DENY);
+            verify(policyEngine, never()).evaluate(any(), eq(JsIdenfier.APPLIES), anyString());
+        }
+
+        @Test
+        void deniesWithErrorWhenPolicyEvaluationFails() {
+            Policy p = policy(11L, "credit-limit", null);
+            givenApplicablePolicies(p);
+            when(policyEngine.evaluate(p, JsIdenfier.POLICY, INPUT_JSON))
+                    .thenThrow(new LibraEvaluationException("js execution was cancelled"));
+
+            assertThat(evaluationService.evaluatePoliciesForUser(request()).join())
+                    .singleElement()
+                    .satisfies(r -> {
+                        assertThat(r.getResult()).isEqualTo(EvaluationResult.DENY);
+                        assertThat(r.getErrors()).containsExactly(Map.entry("msg", "js execution was cancelled"));
+                    });
+        }
+
+        @Test
+        void mixesWithPoliciesThatHaveAppliedJs() {
+            Policy noApplies = policy(11L, "no-applies", null);
+            Policy applies = policy(12L, "applies");
+            Policy skipped = policy(13L, "skipped");
+            givenApplicablePolicies(noApplies, applies, skipped);
+            givenEngine(noApplies, JsIdenfier.POLICY, true);
+            givenEngine(applies, JsIdenfier.APPLIES, true);
+            givenEngine(applies, JsIdenfier.POLICY, false);
+            givenEngine(skipped, JsIdenfier.APPLIES, false);
+
+            assertThat(evaluationService.evaluatePoliciesForUser(request()).join())
+                    .extracting(PolicyEvaluationResultDTO::getPolicyCode, PolicyEvaluationResultDTO::getResult)
+                    .containsExactly(
+                            tuple("no-applies", EvaluationResult.ALLOW),
+                            tuple("applies", EvaluationResult.DENY));
+            verify(policyEngine, never()).evaluate(noApplies, JsIdenfier.APPLIES, INPUT_JSON);
+            verify(policyEngine, never()).evaluate(skipped, JsIdenfier.POLICY, INPUT_JSON);
+        }
+
+        @Test
+        void passesSerializedInputAttrsOnlyToPolicyScript() {
+            Policy p = policy(11L, "credit-limit", null);
+            givenApplicablePolicies(p);
+            ArgumentCaptor<String> input = ArgumentCaptor.forClass(String.class);
+            when(policyEngine.evaluate(eq(p), eq(JsIdenfier.POLICY), input.capture())).thenReturn(true);
+
+            evaluationService.evaluatePoliciesForUser(request()).join();
+
+            assertThat(input.getAllValues()).singleElement()
+                    .satisfies(json -> assertThat(JsonUtil.toMap(json)).isEqualTo(INPUT_ATTRS));
+        }
     }
 
     @Test
@@ -569,6 +659,25 @@ class PolicyEvaluationServiceTest {
                     .containsExactly(
                             tuple("credit-limit", EvaluationResult.ALLOW),
                             tuple("min-amount", EvaluationResult.DENY));
+        }
+
+        @ParameterizedTest(name = "appliedJs = [{0}]")
+        @NullAndEmptySource
+        @ValueSource(strings = {"  "})
+        void evaluatesRealJsPolicyWithoutAppliedJs(String appliedJs) {
+            PolicyEvaluationService service = new PolicyEvaluationService(policyService, graalEngine, policyEvaluationDAO, executor);
+            Policy withinLimit = jsPolicy(11L, "credit-limit", appliedJs,
+                    "function evaluate(input) { return input.amount <= input.limit; }");
+            Policy tooSmall = jsPolicy(12L, "min-amount", appliedJs,
+                    "function evaluate(input) { return input.amount >= 1000; }");
+            givenApplicablePolicies(withinLimit, tooSmall);
+
+            assertThat(service.evaluatePoliciesForUser(request()).join())
+                    .extracting(PolicyEvaluationResultDTO::getPolicyCode, PolicyEvaluationResultDTO::getResult,
+                            PolicyEvaluationResultDTO::getErrors)
+                    .containsExactly(
+                            tuple("credit-limit", EvaluationResult.ALLOW, null),
+                            tuple("min-amount", EvaluationResult.DENY, null));
         }
 
         @Test
