@@ -3,8 +3,8 @@
 a small, multi-tenant policy evaluation engine. send an entity and an input, get back `allow` or `deny`, decided by
 policies written as plain javascript functions.
 
-> **status:** early work in progress. storage, the js engine, and the tenant / scope / policy http api are in place;
-> the evaluation endpoint is not yet.
+> **status:** early work in progress. storage, the js engine, the tenant / scope / policy http api and the evaluation
+> endpoint are in place.
 
 ## how it works
 
@@ -101,6 +101,7 @@ all endpoints are json. creates return `201` with a `Location` header.
 | `GET`   | `/v1/policies/applicable`  | `tenantID`, `scopeID`, `entityID`, optional `at` (epoch ms, default now)     |
 | `PUT`   | `/v1/policies/{id}`        | full update; send the current `version` (optimistic locking)                 |
 | `PATCH` | `/v1/policies/{id}/status` | `{status}`; expired policies cannot change status                            |
+| `POST`  | `/v1/evaluate`             | `{tenantID, scopeID, entityID, inputAttrs}`; `200` with `ALLOW` or `DENY`    |
 | `GET`   | `/healthz`                 | postgres + redis health                                                      |
 
 ```bash
