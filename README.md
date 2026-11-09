@@ -154,3 +154,19 @@ mvn test -pl libra-api -am -Dtest=PolicyControllerTest -Dsurefire.failIfNoSpecif
 |--------------|----------------------------------------------------------------------------------|
 | `libra-core` | DAOs against real postgres, row mappers, services, graaljs engine                |
 | `libra-api`  | controllers (`@WebMvcTest`, mocked services) and transformers (plain unit tests) |
+
+### smoke test
+
+`scripts/smoke.sh` runs curl against a live server and checks every endpoint, including the `ALLOW` / `DENY`
+decisions from `/v1/evaluate`. each run creates its own tenant, so it can be repeated against the same database. it
+needs `curl` and `jq`, and exits non-zero if any check fails.
+
+```bash
+docker compose up -d --build
+```
+
+```bash
+scripts/smoke.sh
+```
+
+pass a base url to point it elsewhere, e.g. `scripts/smoke.sh http://localhost:9090`.
