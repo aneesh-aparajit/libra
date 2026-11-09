@@ -14,6 +14,7 @@ public class BaseDTO {
 
     private Long tenantID;
     private Long scopeID;
+    private Long policyID;
     private String entityID;
 
     public Map<String, Object> logAttrs() {

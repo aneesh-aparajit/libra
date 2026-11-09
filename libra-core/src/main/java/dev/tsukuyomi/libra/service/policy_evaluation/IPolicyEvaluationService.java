@@ -10,4 +10,6 @@ public interface IPolicyEvaluationService {
 
     CompletableFuture<List<PolicyEvaluationResultDTO>> evaluatePoliciesForUser(PolicyEvaluationDTO dto);
 
+    CompletableFuture<PolicyEvaluationDTO> evaluatePolicies(PolicyEvaluationDTO dto);
+
 }
