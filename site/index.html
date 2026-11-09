@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>libra: policy evaluation engine</title>
+    <meta name="description" content="libra is a small, multi-tenant policy evaluation engine: send an entity and an input, get back allow or deny, decided by policies written as plain javascript functions.">
+    <meta name="color-scheme" content="light dark">
+    <link rel="preload" href="fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#body">skip to content</a>
+
+<div class="memo">
+
+    <header class="memo-head">
+        <div class="left">
+            <dl>
+                <dt>project</dt><dd>libra</dd>
+                <dt>document</dt><dd>libra/docs</dd>
+                <dt>category</dt><dd>informational</dd>
+            </dl>
+        </div>
+        <div class="right">
+            <dl>
+                <dt>status</dt><dd>early work in progress</dd>
+                <dt>date</dt><dd>november 2026</dd>
+                <dt>source</dt><dd><a href="https://github.com/aneesh-aparajit/libra">github.com/aneesh-aparajit/libra</a></dd>
+                <dt id="theme-label">theme</dt>
+                <dd>
+                    <fieldset class="theme" aria-labelledby="theme-label">
+                        <input type="radio" name="theme" id="theme-auto" value="auto" checked><label for="theme-auto">auto</label><span class="sep" aria-hidden="true">/</span>
+                        <input type="radio" name="theme" id="theme-light" value="light"><label for="theme-light">light</label><span class="sep" aria-hidden="true">/</span>
+                        <input type="radio" name="theme" id="theme-dark" value="dark"><label for="theme-dark">dark</label>
+                    </fieldset>
+                </dd>
+            </dl>
+        </div>
+    </header>
+
+    <div class="intro front">
+        <h1 class="title">libra: a multi-tenant policy evaluation engine
+            <span class="sub">send an entity and an input, get back allow or deny</span></h1>
+
+        <section class="abstract" aria-labelledby="abstract">
+            <h2 id="abstract">abstract</h2>
+            <p>libra decides whether a request is allowed. a service sends an entity and an input to
+                <code>/v1/evaluate</code>; libra runs every policy that applies and answers
+                <span class="v allow">ALLOW</span> or <span class="v deny">DENY</span> with a per-policy trace.</p>
+            <p>policies are plain javascript functions, so rules change without a redeploy. every applicable policy
+                must allow, any deny or error denies, and every decision is recorded for audit.</p>
+        </section>
+
+        <section aria-labelledby="status">
+            <h2 id="status">status of this memo</h2>
+            <p>this memo documents libra as built today. storage, the js engine, the tenant / scope / policy http api
+                and the evaluation endpoint are in place. a kubernetes crd for policies and automatic expiry sweeping
+                are planned in the <a href="https://github.com/aneesh-aparajit/libra/blob/master/docs/libra.md">design
+                doc</a>, not built.</p>
+        </section>
+
+        <section aria-labelledby="conventions">
+            <h2 id="conventions">conventions</h2>
+            <p>the key words <span class="kw">must</span>, <span class="kw">must not</span>,
+                <span class="kw">should</span> and <span class="kw">may</span> in this document are to be interpreted
+                as described in bcp 14 (<a href="https://www.rfc-editor.org/rfc/rfc2119">rfc 2119</a>,
+                <a href="https://www.rfc-editor.org/rfc/rfc8174">rfc 8174</a>) when, and only when, they appear in
+                small capitals, as shown here.</p>
+        </section>
+    </div>
+
+    <nav class="toc" aria-labelledby="toc-h">
+        <h2 id="toc-h">table of contents</h2>
+        <ol>
+            <li><a href="#s1"><span class="n">1.</span><span class="t">introduction</span></a></li>
+            <li><a href="#s2"><span class="n">2.</span><span class="t">terminology</span></a></li>
+            <li><a href="#s3"><span class="n">3.</span><span class="t">policy model</span></a>
+                <ol>
+                    <li><a href="#s3-1"><span class="n">3.1.</span><span class="t">targeting</span></a></li>
+                    <li><a href="#s3-2"><span class="n">3.2.</span><span class="t">script contract</span></a></li>
+                    <li><a href="#s3-3"><span class="n">3.3.</span><span class="t">evaluation</span></a></li>
+                </ol>
+            </li>
+            <li><a href="#s4"><span class="n">4.</span><span class="t">running libra</span></a>
+                <ol>
+                    <li><a href="#s4-1"><span class="n">4.1.</span><span class="t">quickstart</span></a></li>
+                    <li><a href="#s4-2"><span class="n">4.2.</span><span class="t">configuration</span></a></li>
+                    <li><a href="#s4-3"><span class="n">4.3.</span><span class="t">schema</span></a></li>
+                </ol>
+            </li>
+            <li><a href="#s5"><span class="n">5.</span><span class="t">http api</span></a>
+                <ol>
+                    <li><a href="#s5-1"><span class="n">5.1.</span><span class="t">tenants</span></a></li>
+                    <li><a href="#s5-2"><span class="n">5.2.</span><span class="t">scopes</span></a></li>
+                    <li><a href="#s5-3"><span class="n">5.3.</span><span class="t">policies</span></a></li>
+                    <li><a href="#s5-4"><span class="n">5.4.</span><span class="t">evaluate</span></a></li>
+                    <li><a href="#s5-5"><span class="n">5.5.</span><span class="t">health</span></a></li>
+                </ol>
+            </li>
+            <li><a href="#s6"><span class="n">6.</span><span class="t">errors</span></a></li>
+            <li><a href="#s7"><span class="n">7.</span><span class="t">security considerations</span></a></li>
+            <li><a href="#s8"><span class="n">8.</span><span class="t">testing</span></a></li>
+            <li><a href="#a"><span class="n">a.</span><span class="t">project layout</span></a></li>
+        </ol>
+    </nav>
+
+    <main class="body" id="body">
+
+        <section aria-labelledby="s1">
+            <h2 class="sec" id="s1"><a class="n" href="#s1">1.</a>introduction</h2>
+            <p>authorization and business-rule checks tend to end up hard-coded across services. changing one means a
+                redeploy, there is no audit trail of why a request was denied, and temporary rules (a promo, a freeze
+                window) get forgotten and never removed.</p>
+            <p>libra separates the decision from its enforcement. services ask; libra decides. in particular:</p>
+            <ul>
+                <li>policies are two small javascript scripts, an applicability check and the decision itself
+                    (<a class="xref" href="#s3-2">§3.2</a>).</li>
+                <li>all policies that apply to an entity are evaluated together, and the verdict is unanimous
+                    (<a class="xref" href="#s3-3">§3.3</a>).</li>
+                <li>policies are time-bound with <code>validFrom</code> and <code>validTo</code>.</li>
+                <li>every decision carries a trace and is recorded in <code>policy_evaluations</code>.</li>
+            </ul>
+
+            <figure>
+<pre aria-describedby="fig1">service                    libra              postgres
+   |                         |                    |
+   | POST /v1/evaluate       |                    |
+   | {tenant, scope,         |                    |
+   |  entity, inputAttrs}    |                    |
+   |------------------------&gt;|                    |
+   |                         | applicable         |
+   |                         | policies           |
+   |                         |-------------------&gt;|
+   |                         |&lt;-------------------|
+   |                         | appliedJs, then    |
+   |                         | evaluatedJs, all   |
+   |                         | in parallel on     |
+   |                         | graaljs            |
+   |                         |                    |
+   |                         | record results     |
+   |                         |-------------------&gt;|
+   | ALLOW | DENY,           |                    |
+   | requestID, trace        |                    |
+   |&lt;------------------------|                    |</pre>
+                <figcaption id="fig1"><b>figure 1:</b> one evaluate exchange</figcaption>
+            </figure>
+        </section>
+
+        <section aria-labelledby="s2">
+            <h2 class="sec" id="s2"><a class="n" href="#s2">2.</a>terminology</h2>
+            <dl class="terms">
+                <dt>tenant</dt>
+                <dd>an organization, and the isolation boundary every call is scoped within.</dd>
+                <dt>scope</dt>
+                <dd>a group of users within a tenant, for example <code>notification</code>.</dd>
+                <dt>entity</dt>
+                <dd>an opaque identifier supplied by the client. libra stores no attributes for it and never
+                    interprets it; policies decide from the request's <code>inputAttrs</code>.</dd>
+                <dt>policy</dt>
+                <dd>a pair of javascript scripts, targeted at a whole scope (<code>*</code>) or at one entity, with a
+                    status and a validity window.</dd>
+                <dt>verdict</dt>
+                <dd><span class="v allow">ALLOW</span> or <span class="v deny">DENY</span>, for one policy or for a
+                    whole request.</dd>
+            </dl>
+        </section>
+
+        <section aria-labelledby="s3">
+            <h2 class="sec" id="s3"><a class="n" href="#s3">3.</a>policy model</h2>
+
+            <h3 class="sec" id="s3-1"><a class="n" href="#s3-1">3.1.</a>targeting</h3>
+            <p>a request for an entity picks up both the policies written for that entity and the scope-wide
+                <code>*</code> policies of the same tenant and scope.</p>
+            <div class="tbl">
+                <table>
+                    <caption><b>table 1:</b> targeting</caption>
+                    <thead><tr><th>tenant</th><th>scope</th><th>entityID</th><th>applies to</th></tr></thead>
+                    <tbody>
+                    <tr><td>1</td><td>notification</td><td><code>*</code></td><td>every entity in tenant 1's notification scope</td></tr>
+                    <tr><td>1</td><td>notification</td><td><code>account-holder-1</code></td><td>only account-holder-1, in that scope</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="sec" id="s3-2"><a class="n" href="#s3-2">3.2.</a>script contract</h3>
+            <p>a policy holds two scripts, <code>appliedJs</code> and <code>evaluatedJs</code>. they run in separate
+                contexts and both receive the request's <code>inputAttrs</code> as their only argument.</p>
+            <ul>
+                <li>each script <span class="kw">must</span> define a top-level function named <code>evaluate</code>;
+                    it is the only function the engine calls.</li>
+                <li><code>evaluate</code> <span class="kw">must</span> return a boolean. any other return value is an
+                    error.</li>
+                <li><code>appliedJs</code> <span class="kw">may</span> be omitted, in which case the policy always
+                    applies.</li>
+                <li>scripts <span class="kw">should</span> be pure: no state kept between calls, no i/o, the same
+                    result for the same input.</li>
+            </ul>
+<pre><code><span class="c">// appliedJs: does this policy apply to this request?</span>
+function evaluate(input) {
+    return input.channel === "sms";
+}</code></pre>
+<pre><code><span class="c">// evaluatedJs: true allows, false denies</span>
+function evaluate(input) {
+    return input.amount &lt;= 100;
+}</code></pre>
+
+            <h3 class="sec" id="s3-3"><a class="n" href="#s3-3">3.3.</a>evaluation</h3>
+            <p>given a tenant, scope, entity and <code>inputAttrs</code>, libra:</p>
+            <ol class="steps">
+                <li>loads every <code>ACTIVE</code> policy of that tenant and scope whose <code>entityID</code> is
+                    <code>*</code> or the requested entity, and whose validity window covers the current time.</li>
+                <li>runs all of them in parallel on graaljs. for each, <code>appliedJs</code> decides whether it
+                    applies; if it does, <code>evaluatedJs</code> decides its verdict.</li>
+                <li>treats a missing <code>evaluate</code>, a non-boolean result, a thrown error, or a timeout as
+                    <span class="v deny">DENY</span> for that policy.</li>
+                <li>answers <span class="v allow">ALLOW</span> only if every applicable policy allowed, and
+                    <span class="v deny">DENY</span> otherwise.</li>
+                <li>records each policy's result in <code>policy_evaluations</code> under the <code>requestID</code>
+                    returned to the caller.</li>
+            </ol>
+        </section>
+
+        <section aria-labelledby="s4">
+            <h2 class="sec" id="s4"><a class="n" href="#s4">4.</a>running libra</h2>
+
+            <h3 class="sec" id="s4-1"><a class="n" href="#s4-1">4.1.</a>quickstart</h3>
+            <p>start postgres and redis, build, and run the server on <code>:8080</code>:</p>
+<pre><code>docker compose up -d postgres redis
+mvn clean install
+java -jar libra-api/target/libra-api-1.0-SNAPSHOT.jar</code></pre>
+            <p>then create a tenant, a scope and a policy, and evaluate a request against it:</p>
+<pre><code>curl -s -X POST localhost:8080/v1/tenants -H 'content-type: application/json' \
+  -d '{"tenantCode": "acme", "tenantName": "Acme Corp"}'
+
+curl -s -X POST localhost:8080/v1/scopes -H 'content-type: application/json' \
+  -d '{"tenantID": 1, "scopeName": "payment"}'
+
+curl -s -X POST localhost:8080/v1/policies -H 'content-type: application/json' -d '{
+  "tenantID": 1, "scopeID": 1, "entityID": "*", "code": "max-amount",
+  "evaluatedJs": "function evaluate(input) { return input.amount &lt;= 100; }",
+  "validFrom": 0
+}'
+
+curl -s -X POST localhost:8080/v1/evaluate -H 'content-type: application/json' \
+  -d '{"tenantID": 1, "scopeID": 1, "entityID": "user-42", "inputAttrs": {"amount": 250}}'</code></pre>
+            <p>the last call answers <span class="v deny">DENY</span>, with <code>max-amount</code> in
+                <code>deniedPolicies</code>.</p>
+
+            <h3 class="sec" id="s4-2"><a class="n" href="#s4-2">4.2.</a>configuration</h3>
+            <div class="tbl">
+                <table>
+                    <caption><b>table 2:</b> environment variables; defaults match <code>docker-compose.yaml</code></caption>
+                    <thead><tr><th>variable</th><th>default</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>LIBRA_DB_URL</code></td><td><code>jdbc:postgresql://localhost:5432/libra</code></td></tr>
+                    <tr><td><code>LIBRA_DB_USERNAME</code></td><td><code>postgres</code></td></tr>
+                    <tr><td><code>LIBRA_DB_PASSWORD</code></td><td><code>postgres</code></td></tr>
+                    <tr><td><code>LIBRA_REDIS_HOST</code></td><td><code>localhost</code></td></tr>
+                    <tr><td><code>LIBRA_REDIS_PORT</code></td><td><code>6379</code></td></tr>
+                    <tr><td><code>LIBRA_REDIS_PASSWORD</code></td><td><em>empty</em></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="sec" id="s4-3"><a class="n" href="#s4-3">4.3.</a>schema</h3>
+            <p>the schema lives in <code>libra-core/src/main/resources/db/schema.sql</code>. there are no migrations:
+                docker compose applies it when the postgres volume is first created, and the app never runs it. for an
+                existing database, apply it by hand, once; it is not idempotent:</p>
+<pre><code>psql -h localhost -U postgres -d libra -f libra-core/src/main/resources/db/schema.sql</code></pre>
+        </section>
+
+        <section aria-labelledby="s5">
+            <h2 class="sec" id="s5"><a class="n" href="#s5">5.</a>http api</h2>
+            <p>all endpoints take and return json. creates answer <code>201</code> with a <code>Location</code>
+                header. errors follow <a class="xref" href="#s6">§6</a>.</p>
+
+            <h3 class="sec" id="s5-1"><a class="n" href="#s5-1">5.1.</a>tenants</h3>
+            <div class="tbl">
+                <table class="api">
+                    <thead><tr><th>method</th><th>path</th><th>notes</th></tr></thead>
+                    <tbody>
+                    <tr><td class="m">POST</td><td><code>/v1/tenants</code></td><td><code>{tenantCode, tenantName}</code></td></tr>
+                    <tr><td class="m">GET</td><td><code>/v1/tenants/{id}</code></td><td></td></tr>
+                    <tr><td class="m">GET</td><td><code>/v1/tenants?code=</code></td><td>lookup by tenant code</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="sec" id="s5-2"><a class="n" href="#s5-2">5.2.</a>scopes</h3>
+            <div class="tbl">
+                <table class="api">
+                    <thead><tr><th>method</th><th>path</th><th>notes</th></tr></thead>
+                    <tbody>
+                    <tr><td class="m">POST</td><td><code>/v1/scopes</code></td><td><code>{tenantID, scopeName}</code></td></tr>
+                    <tr><td class="m">GET</td><td><code>/v1/scopes/{id}</code></td><td></td></tr>
+                    <tr><td class="m">GET</td><td><code>/v1/scopes?tenantID=</code></td><td>all scopes of a tenant</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="sec" id="s5-3"><a class="n" href="#s5-3">5.3.</a>policies</h3>
+            <div class="tbl">
+                <table class="api">
+                    <thead><tr><th>method</th><th>path</th><th>notes</th></tr></thead>
+                    <tbody>
+                    <tr><td class="m">POST</td><td><code>/v1/policies</code></td><td>create; see table 3</td></tr>
+                    <tr><td class="m">GET</td><td><code>/v1/policies/{id}</code></td><td></td></tr>
+                    <tr><td class="m">GET</td><td><code>/v1/policies</code></td><td>filter by <code>tenantID</code> + <code>scopeID</code>, <code>entityID</code> + <code>scopeID</code>, or <code>entityID</code></td></tr>
+                    <tr><td class="m">GET</td><td><code>/v1/policies/applicable</code></td><td><code>tenantID</code>, <code>scopeID</code>, <code>entityID</code>, optional <code>at</code> (epoch ms, default now)</td></tr>
+                    <tr><td class="m">PUT</td><td><code>/v1/policies/{id}</code></td><td>full update; send the current <code>version</code> (optimistic locking)</td></tr>
+                    <tr><td class="m">PATCH</td><td><code>/v1/policies/{id}/status</code></td><td><code>{status}</code>; an expired policy cannot change status</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="tbl">
+                <table>
+                    <caption><b>table 3:</b> policy create fields</caption>
+                    <thead><tr><th>field</th><th>type</th><th>notes</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>tenantID</code></td><td>long</td><td>required</td></tr>
+                    <tr><td><code>scopeID</code></td><td>long</td><td>required</td></tr>
+                    <tr><td><code>entityID</code></td><td>string</td><td>required; <code>*</code> for the whole scope (<a class="xref" href="#s3-1">§3.1</a>)</td></tr>
+                    <tr><td><code>code</code></td><td>string</td><td>required; the policy's name, reported in <code>deniedPolicies</code></td></tr>
+                    <tr><td><code>appliedJs</code></td><td>string</td><td>optional; defaults to always applying</td></tr>
+                    <tr><td><code>evaluatedJs</code></td><td>string</td><td>required (<a class="xref" href="#s3-2">§3.2</a>)</td></tr>
+                    <tr><td><code>status</code></td><td>enum</td><td><code>ACTIVE</code> (default) or <code>INACTIVE</code>; <code>EXPIRED</code> is refused on create</td></tr>
+                    <tr><td><code>validFrom</code></td><td>long</td><td>required; epoch ms</td></tr>
+                    <tr><td><code>validTo</code></td><td>long</td><td>optional; epoch ms, after <code>validFrom</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="sec" id="s5-4"><a class="n" href="#s5-4">5.4.</a>evaluate</h3>
+            <p><code>POST /v1/evaluate</code> takes <code>{tenantID, scopeID, entityID, inputAttrs}</code> and
+                answers <code>200</code> with the verdict, decided as in <a class="xref" href="#s3-3">§3.3</a>.</p>
+<pre><code><span class="c">// request</span>
+{
+  "tenantID": 1,
+  "scopeID": 1,
+  "entityID": "account-holder-1",
+  "inputAttrs": { "channel": "sms", "hour": 23 }
+}
+
+<span class="c">// response</span>
+{
+  "requestID": "…",
+  "tenantID": 1,
+  "scopeID": 1,
+  "entityID": "account-holder-1",
+  "result": "DENY",
+  "deniedPolicies": ["quiet-hours"],
+  "evaluations": [
+    { "policyID": 7, "policyCode": "quiet-hours", "entityID": "*",
+      "result": "DENY", "errors": null }
+  ]
+}</code></pre>
+            <p><code>deniedPolicies</code> lists the codes of policies that denied or errored.
+                <code>evaluations</code> is the per-policy trace; a failed script's details are in its
+                <code>errors</code>.</p>
+
+            <h3 class="sec" id="s5-5"><a class="n" href="#s5-5">5.5.</a>health</h3>
+            <p><code>GET /healthz</code> aggregates <code>db</code> (postgres), <code>redis</code>, disk space and
+                ping. it answers <code>200</code> when every component is <code>UP</code> and <code>503</code> when any
+                is <code>DOWN</code>. only component names and statuses are shown, never hosts or versions.</p>
+        </section>
+
+        <section aria-labelledby="s6">
+            <h2 class="sec" id="s6"><a class="n" href="#s6">6.</a>errors</h2>
+            <p>errors are <a href="https://www.rfc-editor.org/rfc/rfc9457">rfc 9457</a> problem details:</p>
+<pre><code>{
+  "title": "Not Found",
+  "status": 404,
+  "detail": "tenant 9 not found",
+  "instance": "/v1/tenants/9"
+}</code></pre>
+            <div class="tbl">
+                <table>
+                    <caption><b>table 4:</b> status codes</caption>
+                    <thead><tr><th>status</th><th>when</th></tr></thead>
+                    <tbody>
+                    <tr><td class="m">400</td><td>validation failure, malformed body or params, unknown referenced tenant or scope</td></tr>
+                    <tr><td class="m">404</td><td>resource not found</td></tr>
+                    <tr><td class="m">409</td><td>duplicate resource, stale <code>version</code> on update, status change on an expired policy</td></tr>
+                    <tr><td class="m">500</td><td>anything else; details are logged, never returned</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section aria-labelledby="s7">
+            <h2 class="sec" id="s7"><a class="n" href="#s7">7.</a>security considerations</h2>
+            <p>libra has no authentication or authorization layer of its own: callers are trusted services, and it
+                <span class="kw">must not</span> be exposed to untrusted clients.</p>
+            <p>policy scripts run in graaljs contexts with host access disabled: no java classes, files, network or
+                threads. each run is bounded by a statement limit of one million and a 500 ms watchdog; a script that
+                exceeds either is stopped, and its policy counts as <span class="v deny">DENY</span>.</p>
+            <p>because any error denies, a broken policy fails closed. policy authors <span class="kw">should</span>
+                test a script against representative <code>inputAttrs</code> before setting it <code>ACTIVE</code>.</p>
+        </section>
+
+        <section aria-labelledby="s8">
+            <h2 class="sec" id="s8"><a class="n" href="#s8">8.</a>testing</h2>
+            <p>docker must be running: the dao tests start postgres with testcontainers.</p>
+<pre><code>mvn test
+
+<span class="c"># one module</span>
+mvn test -pl libra-api -am
+
+<span class="c"># one class</span>
+mvn test -pl libra-api -am -Dtest=PolicyControllerTest -Dsurefire.failIfNoSpecifiedTests=false</code></pre>
+        </section>
+
+        <section aria-labelledby="a">
+            <h2 class="sec" id="a"><a class="n" href="#a">a.</a>project layout</h2>
+            <div class="tbl">
+                <table>
+                    <thead><tr><th>path</th><th>contents</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>libra-core</code></td><td>domain entities, daos and row mappers, services, the js engine, jdbc and json utils, schema</td></tr>
+                    <tr><td><code>libra-api</code></td><td>spring boot application: controllers, request and response dtos, transformers, errors</td></tr>
+                    <tr><td><code>docs/</code></td><td><a href="https://github.com/aneesh-aparajit/libra/blob/master/docs/libra.md">design doc</a></td></tr>
+                    <tr><td><code>site/</code></td><td>this document</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>stack: java 21, spring boot 4, postgresql, redis, graaljs, gson.</p>
+        </section>
+
+        <footer class="colophon">
+            <h2>author's address</h2>
+            <p>aneesh aparajit<br>
+                <a href="https://github.com/aneesh-aparajit/libra">github.com/aneesh-aparajit/libra</a></p>
+        </footer>
+    </main>
+</div>
+</body>
+</html>

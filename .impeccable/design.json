@@ -1,0 +1,505 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-09T15:30:34+00:00",
+  "title": "Design System: libra",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0.000 90)",
+          "oklch(25% 0.000 90)",
+          "oklch(35% 0.000 90)",
+          "oklch(45% 0.000 90)",
+          "oklch(55% 0.000 90)",
+          "oklch(65% 0.000 90)",
+          "oklch(80% 0.000 90)",
+          "oklch(95% 0.000 90)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#16171a",
+        "tonalRamp": [
+          "oklch(15% 0.006 271)",
+          "oklch(25% 0.006 271)",
+          "oklch(35% 0.006 271)",
+          "oklch(45% 0.006 271)",
+          "oklch(55% 0.006 271)",
+          "oklch(65% 0.006 271)",
+          "oklch(80% 0.006 271)",
+          "oklch(95% 0.006 271)"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Second Ink",
+        "canonical": "#4a4d55",
+        "tonalRamp": [
+          "oklch(15% 0.014 269)",
+          "oklch(25% 0.014 269)",
+          "oklch(35% 0.014 269)",
+          "oklch(45% 0.014 269)",
+          "oklch(55% 0.014 269)",
+          "oklch(65% 0.014 269)",
+          "oklch(80% 0.014 269)",
+          "oklch(95% 0.014 269)"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Third Ink",
+        "canonical": "#686c76",
+        "tonalRamp": [
+          "oklch(15% 0.016 268)",
+          "oklch(25% 0.016 268)",
+          "oklch(35% 0.016 268)",
+          "oklch(45% 0.016 268)",
+          "oklch(55% 0.016 268)",
+          "oklch(65% 0.016 268)",
+          "oklch(80% 0.016 268)",
+          "oklch(95% 0.016 268)"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#d9dbe0",
+        "tonalRamp": [
+          "oklch(15% 0.007 269)",
+          "oklch(25% 0.007 269)",
+          "oklch(35% 0.007 269)",
+          "oklch(45% 0.007 269)",
+          "oklch(55% 0.007 269)",
+          "oklch(65% 0.007 269)",
+          "oklch(80% 0.007 269)",
+          "oklch(95% 0.007 269)"
+        ]
+      },
+      "rule-strong": {
+        "role": "neutral",
+        "displayName": "Strong Rule",
+        "canonical": "#16171a",
+        "tonalRamp": [
+          "oklch(15% 0.006 271)",
+          "oklch(25% 0.006 271)",
+          "oklch(35% 0.006 271)",
+          "oklch(45% 0.006 271)",
+          "oklch(55% 0.006 271)",
+          "oklch(65% 0.006 271)",
+          "oklch(80% 0.006 271)",
+          "oklch(95% 0.006 271)"
+        ]
+      },
+      "link": {
+        "role": "primary",
+        "displayName": "Reference Blue",
+        "canonical": "#0b57d0",
+        "tonalRamp": [
+          "oklch(15% 0.199 261)",
+          "oklch(25% 0.199 261)",
+          "oklch(35% 0.199 261)",
+          "oklch(45% 0.199 261)",
+          "oklch(55% 0.199 261)",
+          "oklch(65% 0.199 261)",
+          "oklch(80% 0.199 261)",
+          "oklch(95% 0.199 261)"
+        ]
+      },
+      "allow": {
+        "role": "tertiary",
+        "displayName": "Allow Green",
+        "canonical": "#146c43",
+        "tonalRamp": [
+          "oklch(15% 0.104 157)",
+          "oklch(25% 0.104 157)",
+          "oklch(35% 0.104 157)",
+          "oklch(45% 0.104 157)",
+          "oklch(55% 0.104 157)",
+          "oklch(65% 0.104 157)",
+          "oklch(80% 0.104 157)",
+          "oklch(95% 0.104 157)"
+        ]
+      },
+      "deny": {
+        "role": "tertiary",
+        "displayName": "Deny Red",
+        "canonical": "#b42318",
+        "tonalRamp": [
+          "oklch(15% 0.182 30)",
+          "oklch(25% 0.182 30)",
+          "oklch(35% 0.182 30)",
+          "oklch(45% 0.182 30)",
+          "oklch(55% 0.182 30)",
+          "oklch(65% 0.182 30)",
+          "oklch(80% 0.182 30)",
+          "oklch(95% 0.182 30)"
+        ]
+      },
+      "select": {
+        "role": "neutral",
+        "displayName": "Selection",
+        "canonical": "#cfe0ff",
+        "tonalRamp": [
+          "oklch(15% 0.046 263)",
+          "oklch(25% 0.046 263)",
+          "oklch(35% 0.046 263)",
+          "oklch(45% 0.046 263)",
+          "oklch(55% 0.046 263)",
+          "oklch(65% 0.046 263)",
+          "oklch(80% 0.046 263)",
+          "oklch(95% 0.046 263)"
+        ]
+      },
+      "paper-dark": {
+        "role": "neutral",
+        "displayName": "Paper (dark)",
+        "canonical": "#121316",
+        "tonalRamp": [
+          "oklch(15% 0.006 271)",
+          "oklch(25% 0.006 271)",
+          "oklch(35% 0.006 271)",
+          "oklch(45% 0.006 271)",
+          "oklch(55% 0.006 271)",
+          "oklch(65% 0.006 271)",
+          "oklch(80% 0.006 271)",
+          "oklch(95% 0.006 271)"
+        ]
+      },
+      "ink-dark": {
+        "role": "neutral",
+        "displayName": "Ink (dark)",
+        "canonical": "#e8e9ec",
+        "tonalRamp": [
+          "oklch(15% 0.004 271)",
+          "oklch(25% 0.004 271)",
+          "oklch(35% 0.004 271)",
+          "oklch(45% 0.004 271)",
+          "oklch(55% 0.004 271)",
+          "oklch(65% 0.004 271)",
+          "oklch(80% 0.004 271)",
+          "oklch(95% 0.004 271)"
+        ]
+      },
+      "ink-2-dark": {
+        "role": "neutral",
+        "displayName": "Second Ink (dark)",
+        "canonical": "#b4b7bf",
+        "tonalRamp": [
+          "oklch(15% 0.012 270)",
+          "oklch(25% 0.012 270)",
+          "oklch(35% 0.012 270)",
+          "oklch(45% 0.012 270)",
+          "oklch(55% 0.012 270)",
+          "oklch(65% 0.012 270)",
+          "oklch(80% 0.012 270)",
+          "oklch(95% 0.012 270)"
+        ]
+      },
+      "ink-3-dark": {
+        "role": "neutral",
+        "displayName": "Third Ink (dark)",
+        "canonical": "#8d919b",
+        "tonalRamp": [
+          "oklch(15% 0.016 268)",
+          "oklch(25% 0.016 268)",
+          "oklch(35% 0.016 268)",
+          "oklch(45% 0.016 268)",
+          "oklch(55% 0.016 268)",
+          "oklch(65% 0.016 268)",
+          "oklch(80% 0.016 268)",
+          "oklch(95% 0.016 268)"
+        ]
+      },
+      "rule-dark": {
+        "role": "neutral",
+        "displayName": "Hairline (dark)",
+        "canonical": "#2c2e34",
+        "tonalRamp": [
+          "oklch(15% 0.011 271)",
+          "oklch(25% 0.011 271)",
+          "oklch(35% 0.011 271)",
+          "oklch(45% 0.011 271)",
+          "oklch(55% 0.011 271)",
+          "oklch(65% 0.011 271)",
+          "oklch(80% 0.011 271)",
+          "oklch(95% 0.011 271)"
+        ]
+      },
+      "rule-strong-dark": {
+        "role": "neutral",
+        "displayName": "Strong Rule (dark)",
+        "canonical": "#e8e9ec",
+        "tonalRamp": [
+          "oklch(15% 0.004 271)",
+          "oklch(25% 0.004 271)",
+          "oklch(35% 0.004 271)",
+          "oklch(45% 0.004 271)",
+          "oklch(55% 0.004 271)",
+          "oklch(65% 0.004 271)",
+          "oklch(80% 0.004 271)",
+          "oklch(95% 0.004 271)"
+        ]
+      },
+      "link-dark": {
+        "role": "primary",
+        "displayName": "Reference Blue (dark)",
+        "canonical": "#8ab4ff",
+        "tonalRamp": [
+          "oklch(15% 0.117 262)",
+          "oklch(25% 0.117 262)",
+          "oklch(35% 0.117 262)",
+          "oklch(45% 0.117 262)",
+          "oklch(55% 0.117 262)",
+          "oklch(65% 0.117 262)",
+          "oklch(80% 0.117 262)",
+          "oklch(95% 0.117 262)"
+        ]
+      },
+      "allow-dark": {
+        "role": "tertiary",
+        "displayName": "Allow Green (dark)",
+        "canonical": "#5fd49a",
+        "tonalRamp": [
+          "oklch(15% 0.136 159)",
+          "oklch(25% 0.136 159)",
+          "oklch(35% 0.136 159)",
+          "oklch(45% 0.136 159)",
+          "oklch(55% 0.136 159)",
+          "oklch(65% 0.136 159)",
+          "oklch(80% 0.136 159)",
+          "oklch(95% 0.136 159)"
+        ]
+      },
+      "deny-dark": {
+        "role": "tertiary",
+        "displayName": "Deny Red (dark)",
+        "canonical": "#ff8a7a",
+        "tonalRamp": [
+          "oklch(15% 0.145 29)",
+          "oklch(25% 0.145 29)",
+          "oklch(35% 0.145 29)",
+          "oklch(45% 0.145 29)",
+          "oklch(55% 0.145 29)",
+          "oklch(65% 0.145 29)",
+          "oklch(80% 0.145 29)",
+          "oklch(95% 0.145 29)"
+        ]
+      },
+      "select-dark": {
+        "role": "neutral",
+        "displayName": "Selection (dark)",
+        "canonical": "#23395f",
+        "tonalRamp": [
+          "oklch(15% 0.072 261)",
+          "oklch(25% 0.072 261)",
+          "oklch(35% 0.072 261)",
+          "oklch(45% 0.072 261)",
+          "oklch(55% 0.072 261)",
+          "oklch(65% 0.072 261)",
+          "oklch(80% 0.072 261)",
+          "oklch(95% 0.072 261)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Document title only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Numbered top-level section headings."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Numbered subsection headings."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "All prose at a 68ch measure."
+      },
+      "body-small": {
+        "displayName": "Body Small",
+        "purpose": "Toc titles, table cells, captions."
+      },
+      "keyword": {
+        "displayName": "Keyword",
+        "purpose": "bcp 14 normative keywords in small capitals."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Header block and colophon."
+      },
+      "number": {
+        "displayName": "Number",
+        "purpose": "Section, toc and step numbers; http methods and status codes."
+      },
+      "code": {
+        "displayName": "Code",
+        "purpose": "Code blocks, ascii figures, field-table heads (600)."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "color-shift",
+        "value": "color 120ms ease-out",
+        "purpose": "Theme-switch label colour on hover and check; removed under prefers-reduced-motion."
+      },
+      {
+        "name": "scroll-smooth",
+        "value": "scroll-behavior: smooth",
+        "purpose": "Anchor jumps from toc, section numbers and cross-references; auto under prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "single-column",
+        "value": "1080px"
+      },
+      {
+        "name": "narrow",
+        "value": "640px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Header Block",
+      "kind": "custom",
+      "refersTo": "header-block",
+      "description": "rfc top matter: mono field lists over a strong rule.",
+      "html": "<header class=\"ds-head\"><dl><dt>project</dt><dd>libra</dd><dt>category</dt><dd>informational</dd></dl><dl><dt>status</dt><dd>early work in progress</dd><dt>date</dt><dd>november 2026</dd></dl></header>",
+      "css": ":host{--paper:#ffffff;--ink:#16171a;--ink-2:#4a4d55;--ink-3:#686c76;--rule:#d9dbe0;--rule-strong:#16171a;--link:#0b57d0;--allow:#146c43;--deny:#b42318;--serif:\"Source Serif 4\",\"Iowan Old Style\",\"Charter\",Georgia,serif;--mono:\"JetBrains Mono\",ui-monospace,\"SF Mono\",Menlo,monospace;--hang:4.25rem} .ds-head{display:flex;justify-content:space-between;gap:2rem;padding:2.25rem 0 1.25rem;border-bottom:1px solid var(--rule-strong);font:400 0.8125rem/1.7 var(--mono);color:var(--ink-2);background:var(--paper)} .ds-head dl{margin:0;display:grid;grid-template-columns:max-content max-content;column-gap:1ch} .ds-head dt{color:var(--ink-3)} .ds-head dt::after{content:\":\"} .ds-head dd{margin:0;color:var(--ink)}"
+    },
+    {
+      "name": "Theme Switch",
+      "kind": "chip",
+      "refersTo": "theme-switch-option",
+      "description": "css-only auto / light / dark header field; radios hidden, labels underline when checked.",
+      "html": "<fieldset class=\"ds-theme\"><input type=\"radio\" name=\"ds-t\" id=\"ds-t-a\" checked><label for=\"ds-t-a\">auto</label><span class=\"ds-sep\">/</span><input type=\"radio\" name=\"ds-t\" id=\"ds-t-l\"><label for=\"ds-t-l\">light</label><span class=\"ds-sep\">/</span><input type=\"radio\" name=\"ds-t\" id=\"ds-t-d\"><label for=\"ds-t-d\">dark</label></fieldset>",
+      "css": ":host{--paper:#ffffff;--ink:#16171a;--ink-2:#4a4d55;--ink-3:#686c76;--rule:#d9dbe0;--rule-strong:#16171a;--link:#0b57d0;--allow:#146c43;--deny:#b42318;--serif:\"Source Serif 4\",\"Iowan Old Style\",\"Charter\",Georgia,serif;--mono:\"JetBrains Mono\",ui-monospace,\"SF Mono\",Menlo,monospace;--hang:4.25rem} .ds-theme{display:inline-flex;align-items:center;gap:0.25ch;margin:0;padding:0;border:0;font:400 0.8125rem var(--mono)} .ds-theme input{position:absolute;opacity:0;width:1px;height:1px;margin:0} .ds-theme label{display:inline-block;min-height:24px;line-height:24px;cursor:pointer;padding:0 0.35ch;color:var(--ink-3);border-radius:2px;transition:color 120ms ease-out} .ds-theme label:hover{color:var(--ink)} .ds-theme input:checked+label{color:var(--ink);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:0.25em} .ds-theme input:focus-visible+label{outline:2px solid var(--link);outline-offset:1px} .ds-sep{color:var(--ink-3)}"
+    },
+    {
+      "name": "Table of Contents",
+      "kind": "nav",
+      "refersTo": "toc-link",
+      "description": "Sticky rail: mono tabular numbers, serif titles; hover turns the entry blue.",
+      "html": "<nav class=\"ds-toc\"><h2>table of contents</h2><ol><li><a href=\"#\"><span class=\"n\">1.</span><span class=\"t\">introduction</span></a></li><li><a href=\"#\"><span class=\"n\">3.</span><span class=\"t\">policy model</span></a><ol><li><a href=\"#\"><span class=\"n\">3.1.</span><span class=\"t\">targeting</span></a></li></ol></li></ol></nav>",
+      "css": ":host{--paper:#ffffff;--ink:#16171a;--ink-2:#4a4d55;--ink-3:#686c76;--rule:#d9dbe0;--rule-strong:#16171a;--link:#0b57d0;--allow:#146c43;--deny:#b42318;--serif:\"Source Serif 4\",\"Iowan Old Style\",\"Charter\",Georgia,serif;--mono:\"JetBrains Mono\",ui-monospace,\"SF Mono\",Menlo,monospace;--hang:4.25rem} .ds-toc{font:400 0.9375rem/1.45 var(--serif);background:var(--paper)} .ds-toc h2{margin:0 0 0.75rem;font:600 1rem var(--serif);color:var(--ink)} .ds-toc ol{list-style:none;margin:0;padding:0} .ds-toc ol ol{margin:0.15rem 0 0.35rem 2.75ch} .ds-toc a{display:flex;gap:1ch;padding:0.2rem 0;color:var(--ink-2);text-decoration:none} .ds-toc a:hover{color:var(--link)} .ds-toc a:hover .t{text-decoration:underline;text-underline-offset:0.2em} .ds-toc a:focus-visible{outline:2px solid var(--link);outline-offset:3px;border-radius:2px} .ds-toc .n{flex:none;min-width:3.25ch;padding-top:0.15em;font:400 0.8125rem/1.5 var(--mono);font-variant-numeric:tabular-nums;color:var(--ink-3)} .ds-toc ol ol .n{min-width:4.5ch}"
+    },
+    {
+      "name": "Section Heading",
+      "kind": "custom",
+      "refersTo": "section-heading",
+      "description": "Serif heading with its mono number hung in the left margin as the anchor.",
+      "html": "<div class=\"ds-col\"><h2 class=\"ds-sec\"><a class=\"n\" href=\"#\">3.</a>policy model</h2><p>a request for an entity picks up both the policies written for that entity and the scope-wide policies.</p></div>",
+      "css": ":host{--paper:#ffffff;--ink:#16171a;--ink-2:#4a4d55;--ink-3:#686c76;--rule:#d9dbe0;--rule-strong:#16171a;--link:#0b57d0;--allow:#146c43;--deny:#b42318;--serif:\"Source Serif 4\",\"Iowan Old Style\",\"Charter\",Georgia,serif;--mono:\"JetBrains Mono\",ui-monospace,\"SF Mono\",Menlo,monospace;--hang:4.25rem} .ds-col{padding-left:var(--hang);max-width:calc(68ch + var(--hang));font:400 1.0625rem/1.6 var(--serif);color:var(--ink);background:var(--paper)} .ds-sec{position:relative;margin:0 0 1rem;padding-top:1.25rem;border-top:1px solid var(--rule);font-size:1.5rem;line-height:1.25;font-weight:600;letter-spacing:-0.01em} .ds-sec .n{position:absolute;left:calc(-1 * var(--hang));width:calc(var(--hang) - 1rem);top:calc(1.25rem + 0.35em);font:500 0.875rem var(--mono);font-variant-numeric:tabular-nums;color:var(--ink-3);text-decoration:none;text-align:right} .ds-sec .n:hover{color:var(--link);text-decoration:underline} .ds-sec .n:focus-visible{outline:2px solid var(--link);outline-offset:3px;border-radius:2px}"
+    },
+    {
+      "name": "Verdicts, Keywords and Cross-references",
+      "kind": "custom",
+      "refersTo": "verdict-allow",
+      "description": "Bracketed mono verdict words, small-caps bcp 14 keywords, and section cross-references in running prose.",
+      "html": "<p class=\"ds-p\">each script <span class=\"ds-kw\">must</span> return a boolean; libra answers <span class=\"ds-v ds-allow\">ALLOW</span> only if every policy allowed and <span class=\"ds-v ds-deny\">DENY</span> otherwise (<a class=\"ds-a\" href=\"#\">§3.3</a>).</p>",
+      "css": ":host{--paper:#ffffff;--ink:#16171a;--ink-2:#4a4d55;--ink-3:#686c76;--rule:#d9dbe0;--rule-strong:#16171a;--link:#0b57d0;--allow:#146c43;--deny:#b42318;--serif:\"Source Serif 4\",\"Iowan Old Style\",\"Charter\",Georgia,serif;--mono:\"JetBrains Mono\",ui-monospace,\"SF Mono\",Menlo,monospace;--hang:4.25rem} .ds-p{font:400 1.0625rem/1.6 var(--serif);color:var(--ink);background:var(--paper);max-width:68ch} .ds-kw{font-variant-caps:all-small-caps;font-weight:600;letter-spacing:0.04em} .ds-v{font:600 0.82em var(--mono);letter-spacing:0.02em;white-space:nowrap} .ds-v::before{content:\"[\";color:var(--ink-3);font-weight:400} .ds-v::after{content:\"]\";color:var(--ink-3);font-weight:400} .ds-allow{color:var(--allow)} .ds-deny{color:var(--deny)} .ds-a{color:var(--link);text-decoration-thickness:1px;text-underline-offset:0.18em;white-space:nowrap} .ds-a:hover{text-decoration-thickness:2px} .ds-a:focus-visible{outline:2px solid var(--link);outline-offset:3px;border-radius:2px}"
+    },
+    {
+      "name": "Code Block",
+      "kind": "card",
+      "refersTo": "code-block",
+      "description": "Hairline-bordered mono block on paper; comments in third ink, no other highlighting.",
+      "html": "<pre class=\"ds-pre\"><code><span class=\"c\">// evaluatedJs: true allows, false denies</span>\nfunction evaluate(input) {\n    return input.amount &lt;= 100;\n}</code></pre>",
+      "css": ":host{--paper:#ffffff;--ink:#16171a;--ink-2:#4a4d55;--ink-3:#686c76;--rule:#d9dbe0;--rule-strong:#16171a;--link:#0b57d0;--allow:#146c43;--deny:#b42318;--serif:\"Source Serif 4\",\"Iowan Old Style\",\"Charter\",Georgia,serif;--mono:\"JetBrains Mono\",ui-monospace,\"SF Mono\",Menlo,monospace;--hang:4.25rem} .ds-pre{margin:0;padding:1rem 1.25rem;border:1px solid var(--rule);background:var(--paper);color:var(--ink);overflow-x:auto;font:400 0.8125rem/1.6 var(--mono);font-variant-ligatures:none;tab-size:4} .ds-pre .c{color:var(--ink-3)}"
+    },
+    {
+      "name": "Figure",
+      "kind": "custom",
+      "refersTo": "code-block",
+      "description": "Centered ascii diagram with a centered figure n: caption below.",
+      "html": "<figure class=\"ds-fig\"><pre>service          libra\n   |                 |\n   |----------------&gt;|\n   |&lt;----------------|</pre><figcaption><b>figure 1:</b> one evaluate exchange</figcaption></figure>",
+      "css": ":host{--paper:#ffffff;--ink:#16171a;--ink-2:#4a4d55;--ink-3:#686c76;--rule:#d9dbe0;--rule-strong:#16171a;--link:#0b57d0;--allow:#146c43;--deny:#b42318;--serif:\"Source Serif 4\",\"Iowan Old Style\",\"Charter\",Georgia,serif;--mono:\"JetBrains Mono\",ui-monospace,\"SF Mono\",Menlo,monospace;--hang:4.25rem} .ds-fig{margin:0;background:var(--paper)} .ds-fig pre{margin:0 auto;width:fit-content;max-width:100%;padding:1.25rem 1.5rem;border:1px solid var(--rule);font:400 0.8125rem/1.45 var(--mono);color:var(--ink)} .ds-fig figcaption{margin-top:0.6rem;text-align:center;font:400 0.9375rem var(--serif);color:var(--ink-2)} .ds-fig b{font-weight:600;color:var(--ink)}"
+    },
+    {
+      "name": "Field Table",
+      "kind": "custom",
+      "description": "Rule-only table: mono head between strong rules, hairline rows, caption below.",
+      "html": "<table class=\"ds-tbl\"><caption><b>table 4:</b> status codes</caption><thead><tr><th>status</th><th>when</th></tr></thead><tbody><tr><td class=\"m\">404</td><td>resource not found</td></tr><tr><td class=\"m\">409</td><td>duplicate resource or stale <code>version</code></td></tr></tbody></table>",
+      "css": ":host{--paper:#ffffff;--ink:#16171a;--ink-2:#4a4d55;--ink-3:#686c76;--rule:#d9dbe0;--rule-strong:#16171a;--link:#0b57d0;--allow:#146c43;--deny:#b42318;--serif:\"Source Serif 4\",\"Iowan Old Style\",\"Charter\",Georgia,serif;--mono:\"JetBrains Mono\",ui-monospace,\"SF Mono\",Menlo,monospace;--hang:4.25rem} .ds-tbl{border-collapse:collapse;width:100%;font:400 0.9375rem/1.45 var(--serif);font-variant-numeric:tabular-nums;color:var(--ink);background:var(--paper)} .ds-tbl caption{caption-side:bottom;padding-top:0.6rem;color:var(--ink-2)} .ds-tbl caption b{font-weight:600;color:var(--ink)} .ds-tbl th{text-align:left;font:600 0.8125rem/1.4 var(--mono);color:var(--ink-2);padding:0.55rem 1.25rem 0.55rem 0;border-top:1px solid var(--rule-strong);border-bottom:1px solid var(--rule-strong)} .ds-tbl td{padding:0.6rem 1.25rem 0.6rem 0;border-bottom:1px solid var(--rule);vertical-align:top} .ds-tbl tr:last-child td{border-bottom-color:var(--rule-strong)} .ds-tbl td.m{font:500 0.8125rem/1.6 var(--mono)} .ds-tbl code{font:0.84em var(--mono)}"
+    },
+    {
+      "name": "Colophon",
+      "kind": "custom",
+      "description": "The closing author's address in mono under a strong rule.",
+      "html": "<footer class=\"ds-colo\"><h2>author's address</h2><p>aneesh aparajit<br><a href=\"#\">github.com/aneesh-aparajit/libra</a></p></footer>",
+      "css": ":host{--paper:#ffffff;--ink:#16171a;--ink-2:#4a4d55;--ink-3:#686c76;--rule:#d9dbe0;--rule-strong:#16171a;--link:#0b57d0;--allow:#146c43;--deny:#b42318;--serif:\"Source Serif 4\",\"Iowan Old Style\",\"Charter\",Georgia,serif;--mono:\"JetBrains Mono\",ui-monospace,\"SF Mono\",Menlo,monospace;--hang:4.25rem} .ds-colo{padding-top:1.25rem;border-top:1px solid var(--rule-strong);font:400 0.8125rem/1.7 var(--mono);color:var(--ink-2);background:var(--paper)} .ds-colo h2{font:600 0.8125rem var(--mono);color:var(--ink);margin:0 0 0.5rem} .ds-colo p{margin:0} .ds-colo a{color:inherit} .ds-colo a:focus-visible{outline:2px solid var(--link);outline-offset:3px;border-radius:2px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Request for Comments",
+    "overview": "libra's documentation is set as an ietf rfc: the form engineers already trust for protocol truth. A mono header block of fields opens the page, the title sits centered beneath it, the abstract comes first, and everything after is a numbered section whose number hangs in the left margin and doubles as its anchor. Prose cites prose by `§n`. Normative keywords are set in small capitals under a bcp 14 conventions paragraph. Diagrams are ascii, captioned `figure n:`; tables are captioned `table n:`. The document closes with an author's address, the way an rfc ends.\n\nThe page is quiet, dense and typographic. Paper and ink carry everything; one link blue marks what can be followed; green and red exist only for the bracketed verdict words. Structure is drawn with 1px hairlines and whitespace, never with containers, fills or shadow. The serif reads; the mono indexes. A dark ink set ships beside paper white, chosen by a css-only `theme: auto / light / dark` field in the header block; it is the same document on a dark ground, not a second world.\n\nDurable product commitments bind the visual system: lowercase voice throughout (headings, captions, toc), one page with anchors, and no javascript, so every interactive state (theme, focus, hover) is pure css.",
+    "keyCharacteristics": [
+      "Paper ground, near-black ink, one link blue; verdict green and red only inside brackets.",
+      "Source Serif 4 for prose, headings and toc titles; JetBrains Mono only for header fields, numbers, code, figures, field-table heads and the colophon.",
+      "Section numbers hang in the left margin and are the anchors.",
+      "Hairline rules for all structure; no cards, no shadows, no fills on code.",
+      "Light and dark token sets, switched without javascript."
+    ],
+    "rules": [
+      {
+        "name": "The One Blue Rule",
+        "body": "Blue means \"you can follow this\", and nothing else is blue. No blue headings, rules, fills or decorative accents.",
+        "section": "colors"
+      },
+      {
+        "name": "The Bracketed Verdict Rule",
+        "body": "Green and red appear only on the words `ALLOW` and `DENY`, always set in mono and wrapped in third-ink brackets (`[ALLOW]`, `[DENY]`), so the verdict reads without colour. Never colour a row, border, background or icon by verdict.",
+        "section": "colors"
+      },
+      {
+        "name": "The Serif Reads, Mono Indexes Rule",
+        "body": "Mono is allowed only on header fields, numbers, code, figures, field-table heads, verdict words and the colophon. Prose, headings and toc titles are always serif.",
+        "section": "typography"
+      },
+      {
+        "name": "The Small Capitals Rule",
+        "body": "Normative keywords are set in all-small-caps semibold, never uppercase, bold-only or coloured; small capitals are what the conventions paragraph defines as normative.",
+        "section": "typography"
+      },
+      {
+        "name": "The Lowercase Voice Rule",
+        "body": "Headings, captions, labels and toc entries are lowercase; only code identifiers, http methods and verdict words keep their own case.",
+        "section": "typography"
+      },
+      {
+        "name": "The Hang Rule",
+        "body": "Section numbers live in the left margin, outside the measure, right-aligned against the prose. The prose edge never moves to make room for a number.",
+        "section": "layout"
+      },
+      {
+        "name": "The Paper Rule",
+        "body": "Nothing floats. No box-shadow, no card, no background fill to set content apart; if a region needs separation, give it a 1px rule or more space.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** hang every section number in the 4.25rem left margin as its own anchor link, and cite sections as `§n`.",
+      "**Do** caption every figure and table below it, centered for figures, with an ink 600 label (`figure n:`, `table n:`).",
+      "**Do** draw structure with 1px rules only: hairline for sections and rows, strong (ink-weight) for the header block, colophon and table heads.",
+      "**Do** define every colour as a role with both a light and a dark value, and reference roles, never literal hex, in components.",
+      "**Do** keep every interactive state pure css: the theme switch, hover, focus and skip link all work with javascript off.",
+      "**Do** hold prose to the 68ch measure and keep the hang outside it."
+    ],
+    "donts": [
+      "**Don't** use colour for anything but links (blue) and bracketed verdict words (green, red).",
+      "**Don't** add cards, shadows, background fills on code, or rounded containers.",
+      "**Don't** set prose, headings or toc titles in mono, or header fields and numbers in serif.",
+      "**Don't** set bcp 14 keywords in uppercase or colour; they are small capitals.",
+      "**Don't** add javascript, including to persist the theme choice."
+    ]
+  }
+}
