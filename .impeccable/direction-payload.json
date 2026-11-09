@@ -1,0 +1,128 @@
+{
+  "title": "Choose the visual world for the libra docs",
+  "question": "The roll assigned the Clearing House Ledger. Keep it, take an alternate, or re-roll.",
+  "options": [
+    {
+      "id": "assigned",
+      "label": "Clearing House Ledger",
+      "kicker": "THE ROLL",
+      "lineage": "bank cheque clearing: security paper, ruled ledgers, cleared and returned stamps",
+      "thesis": "Every request is a cheque presented for clearing: each policy signs off, and one refusal returns it.",
+      "palette": ["#e3ece6", "#163a2c", "#2f6b4f", "#b8322a", "#f7faf7"],
+      "materials": ["guilloche security paper", "ruled ledger columns", "rubber-stamp ink"],
+      "viewport": "A security-paper masthead set like a cheque face (payee: your service, amount: one decision) over a calm white column; the left rail is a ledger index with entry numbers.",
+      "risk": "Banking can read stiff or ornamental if the guilloche creeps into the reading column.",
+      "raised": [
+        {"from": "challenger-cutting-bench", "raise": "State is a mark, not only a hue: ALLOW and DENY read as cleared and returned stamps with distinct shapes, legible in greyscale."},
+        {"from": "challenger-broadside", "raise": "Two inks only, committed: ledger green and return red; no third accent anywhere."},
+        {"from": "challenger-daylight", "raise": "One continuous ledger rule runs the page, and every section is a numbered entry pinned to it."},
+        {"from": "challenger-cloud-quarry", "raise": "Every section, endpoint and status code carries a running entry number set in tabular figures."}
+      ]
+    },
+    {
+      "id": "model-pick",
+      "label": "Request for Comments",
+      "kicker": "IMPECCABLE’S PICK",
+      "lineage": "IETF RFC documents: header block, numbered sections, MUST and SHOULD",
+      "thesis": "libra documented the way engineers already read protocol truth: as a numbered, normative spec.",
+      "palette": ["#ffffff", "#111111", "#6b6b6b", "#0b57d0"],
+      "materials": ["plain-text spec layout", "section numbering", "normative keywords"],
+      "viewport": "An RFC header block (status, category, date) above a numbered table of contents, the column in a reading serif with section numbers hung in the margin.",
+      "risk": "Familiar: it is where many developer-doc redesigns land, and it can feel austere."
+    },
+    {
+      "id": "challenger-zine",
+      "label": "Hand-drawn Zine Explainer",
+      "verdict": "competitive",
+      "lineage": "engineer-to-engineer explainer zines",
+      "thesis": "libra explained like a friend sketching the evaluate loop on a napkin.",
+      "palette": ["#fff6d8", "#111111", "#ffe14d", "#ff7ab6", "#2ec4b6"],
+      "materials": ["marker ink", "highlighter swipes", "doodled arrows"],
+      "viewport": "A marker headline over a doodled request → policies → verdict diagram, then panels stepping through the contract.",
+      "case": "Engineers love this form and it explains 'what and why' fast; the api reference loses rigor.",
+      "risk": "Reference tables and status codes feel unserious in marker, and it needs SVG art to land.",
+      "hero": "https://impeccable.style/worlds/cards/hand-drawn-zine-explainer-hero.webp"
+    },
+    {
+      "id": "challenger-swiss",
+      "label": "Swiss Grid Poster Wall",
+      "verdict": "competitive",
+      "lineage": "International Typographic Style concert posters",
+      "thesis": "One modular grid disciplines every section; geometry is the only imagery.",
+      "palette": ["#f4f4f1", "#111111", "#e1251b"],
+      "materials": ["visible module grid", "geometric bars and arcs", "grotesk type"],
+      "viewport": "A huge flush-left 'libra' on the module with a red bar marking the current section, reference tables snapped to the grid.",
+      "case": "Very clear structure for reference; says little about libra itself.",
+      "risk": "Generic: could be any product's docs once the name is covered.",
+      "hero": "https://impeccable.style/worlds/cards/design-canon-swiss-grid-poster-wall-hero.webp"
+    },
+    {
+      "id": "challenger-cutting-bench",
+      "label": "Film Cutting Bench",
+      "verdict": "declined",
+      "lineage": "editor's select rail",
+      "thesis": "Sections strung on a perforated rail.",
+      "palette": ["#0a0a0a", "#ff6a13", "#ffffff"],
+      "materials": ["film grain", "tape flags"],
+      "viewport": "A perforated rail crossing an orange field.",
+      "case": "Service engineers don't identify with film editing; the rail fights reading order.",
+      "risk": "A costume on a reference page.",
+      "kept": "State is a mark, not only a hue.",
+      "hero": "https://impeccable.style/worlds/cards/operate-a-cutting-bench-select-rail-hero.webp"
+    },
+    {
+      "id": "challenger-broadside",
+      "label": "Penny-press Broadside",
+      "verdict": "declined",
+      "lineage": "Posada calavera sheets",
+      "thesis": "The docs as one shouting sheet.",
+      "palette": ["#efe9dc", "#111111", "#e0412b"],
+      "materials": ["relief engraving", "newsprint"],
+      "viewport": "Wood-type headline over two rammed columns.",
+      "case": "Loses both axes: no fit with the audience, two hard columns hurt reference reading.",
+      "risk": "Reads as a poster, not documentation.",
+      "kept": "Total one-ink commitment.",
+      "hero": "https://impeccable.style/worlds/cards/posters-covers-sleeves-posada-calavera-broadside-hero.webp"
+    },
+    {
+      "id": "challenger-daylight",
+      "label": "Daylight Section",
+      "verdict": "declined",
+      "lineage": "architectural sun studies",
+      "thesis": "A building section with a moving sunbeam.",
+      "palette": ["#f4f1ea", "#2a2a2a", "#e3a92b", "#5d7fa3"],
+      "materials": ["limewash", "section poche"],
+      "viewport": "One long section with sun-angle annotations.",
+      "case": "No link to policy evaluation; a metaphor the reader must decode.",
+      "risk": "Pure mood for this product.",
+      "kept": "One continuous rule with pinned annotations.",
+      "hero": "https://impeccable.style/worlds/cards/architecture-inhabitable-space-daylight-section-hero.webp"
+    },
+    {
+      "id": "challenger-cloud-quarry",
+      "label": "Cloud Quarry",
+      "verdict": "declined",
+      "lineage": "surreal weather architecture",
+      "thesis": "Cutting blocks of weather.",
+      "palette": ["#f7f9fb", "#6fa8dc", "#4a4f57", "#c0c6cc"],
+      "materials": ["cumulus mass", "stencil caps"],
+      "viewport": "Stacked cloud blocks with blue voids.",
+      "case": "Loses both axes: dreamlike where engineers want precision.",
+      "risk": "Unreadable as documentation.",
+      "kept": "Running tally numbers on every block.",
+      "hero": "https://impeccable.style/worlds/cards/dream-surreal-impossible-worlds-cloud-quarry-hero.webp"
+    }
+  ],
+  "reroll": {"registers": ["safer", "bolder"]},
+  "buildPath": {"value": "code"},
+  "canon": true,
+  "canonCard": {
+    "label": "The category standard",
+    "thesis": "Modern developer docs, executed impeccably.",
+    "palette": ["#ffffff", "#0f172a", "#4f46e5"],
+    "materials": ["sidebar tree", "clean sans", "tabbed code samples"],
+    "viewport": "Left nav tree, centered column, right-hand on-this-page list.",
+    "risk": "Indistinguishable from every other project's docs by design."
+  },
+  "steer": true
+}
