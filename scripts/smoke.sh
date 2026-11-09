@@ -88,15 +88,15 @@ call 400 "scope with unknown tenant" POST /v1/scopes "{\"tenantID\":$NONE,\"scop
 call 404 "missing scope" GET "/v1/scopes/$NONE"
 
 echo "policies"
-# scope-wide, no appliedJs (defaults to true), returns { allow, reason }
+# scope-wide, no appliedJs (defaults to true), returns a boolean
 policy "create scope-wide policy" '*' amount-limit \
-  'function evaluate(input, entity, ctx) { return { allow: input.amount <= 100, reason: \"amount over limit\" }; }'
+  'function evaluate(input) { return input.amount <= 100; }'
 PID_WIDE=$(field .id)
 V_WIDE=$(field .version)
 # entity-specific, explicit appliedJs, returns a boolean
 policy "create entity policy" user-42 no-sms \
-  'function evaluate(input, entity, ctx) { return input.channel !== \"sms\"; }' \
-  "\"appliedJs\":\"function evaluate(entity, ctx) { return true; }\",\"validTo\":$FUTURE"
+  'function evaluate(input) { return input.channel !== \"sms\"; }' \
+  "\"appliedJs\":\"function evaluate(input) { return true; }\",\"validTo\":$FUTURE"
 PID_ENT=$(field .id)
 call 409 "duplicate tenant+scope+entity" POST /v1/policies \
   "{\"tenantID\":$TID,\"scopeID\":$SID,\"entityID\":\"user-42\",\"code\":\"dup\",\"evaluatedJs\":\"function evaluate() { return true; }\",\"validFrom\":$PAST}"

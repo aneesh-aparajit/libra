@@ -47,20 +47,19 @@ a policy holds two scripts, `applied_js` and `evaluate_js`. they run in separate
 top-level function named `evaluate`**: that is the only function the engine calls. a script with no `evaluate`
 function, or where `evaluate` is not callable, fails validation and the evaluation is an error (so `deny`).
 
-`applied_js`, whether the policy applies to this entity:
+`applied_js`, whether the policy applies to this request:
 
 ```js
-function evaluate(entity, ctx) {        // entity = { id, attributes }; ctx = { now, tenant, scope }
-    return entity.attributes.region === "eu";
+function evaluate(input) {              // input = request payload (inputAttrs)
+    return input.channel === "sms";
 }
 ```
 
 `evaluate_js`, whether the request is allowed:
 
 ```js
-function evaluate(input, entity, ctx) { // input = request payload
-    const hour = new Date(ctx.now).getUTCHours();
-    return {allow: hour >= 8 && hour < 22, reason: "quiet hours"};
+function evaluate(input) {              // input = request payload (inputAttrs)
+    return input.amount <= 100;
 }
 ```
 
@@ -90,8 +89,8 @@ function evaluate(input, entity, ctx) { // input = request payload
 | `entity_id`   | string | to whom the policy is applied                                                                 |
 | `scope`       | string |                                                                                               |
 | `code`        | string | policy's name                                                                                 |
-| `appliedJs`  | string | optional; defaults to true. `function evaluate(entity, ctx)` returns true if it applies       |
-| `evaluate_js` | string | `function evaluate(input, entity, ctx)` returns a boolean (true = allow) or `{allow, reason}` |
+| `applied_js`  | string | optional; defaults to true. `function evaluate(input)` returns true if it applies             |
+| `evaluate_js` | string | `function evaluate(input)` returns a boolean (true = allow)                                   |
 | `status`      | enum   | ACTIVE; INACTIVE; EXPIRED                                                                     |
 | `valid_from`  | bigint | epoch time                                                                                    |
 | `valid_till`  | bigint | epoch time                                                                                    |
