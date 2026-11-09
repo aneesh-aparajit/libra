@@ -6,8 +6,7 @@ import dev.tsukuyomi.libra.domain.entity.Policy;
 import dev.tsukuyomi.libra.domain.enums.PolicyStatus;
 import dev.tsukuyomi.libra.exeception.LibraDAOException;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,11 +27,10 @@ import static dev.tsukuyomi.libra.utils.Constants.PolicyDAOConstants.VALID_FROM;
 import static dev.tsukuyomi.libra.utils.Constants.PolicyDAOConstants.VALID_TILL;
 import static dev.tsukuyomi.libra.utils.Constants.PolicyDAOConstants.VERSION;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class PolicyDAO extends BaseDAO {
-
-    private static final Logger logger = LoggerFactory.getLogger(PolicyDAO.class);
 
     private static final long INITIAL_VERSION = 1L;
 
@@ -106,7 +104,7 @@ public class PolicyDAO extends BaseDAO {
             List<Policy> policies = queryExecutor.query(CREATE_POLICY_SQL, rowMapper, params);
             return filterQueryObjects(policies);
         } catch (Exception ex) {
-            logger.error("error creating policy", ex);
+            log.error("error creating policy", ex);
             throw new LibraDAOException("error creating policy", ex);
         }
     }
@@ -120,7 +118,7 @@ public class PolicyDAO extends BaseDAO {
             }
             return Optional.ofNullable(filterQueryObjects(policies));
         } catch (Exception ex) {
-            logger.error("error getting policy by ID", ex);
+            log.error("error getting policy by ID", ex);
             throw new LibraDAOException("error getting policy by ID", ex);
         }
     }
@@ -130,7 +128,7 @@ public class PolicyDAO extends BaseDAO {
             Object[] params = new Object[]{entityID};
             return queryExecutor.query(GET_POLICIES_BY_ENTITY_ID, rowMapper, params);
         } catch (Exception ex) {
-            logger.error("error getting policies by entity ID", ex);
+            log.error("error getting policies by entity ID", ex);
             throw new LibraDAOException("error getting policies by entity ID", ex);
         }
     }
@@ -140,7 +138,7 @@ public class PolicyDAO extends BaseDAO {
             Object[] params = new Object[]{entityID, scopeID};
             return queryExecutor.query(GET_POLICIES_BY_ENTITY_ID_AND_SCOPE, rowMapper, params);
         } catch (Exception ex) {
-            logger.error("error getting policies by entity ID and scope", ex);
+            log.error("error getting policies by entity ID and scope", ex);
             throw new LibraDAOException("error getting policies by entity ID and scope", ex);
         }
     }
@@ -150,7 +148,7 @@ public class PolicyDAO extends BaseDAO {
             Object[] params = new Object[]{tenantID, scopeID};
             return queryExecutor.query(GET_POLICIES_BY_TENANT_ID_AND_SCOPE, rowMapper, params);
         } catch (Exception ex) {
-            logger.error("error getting policies by tenant ID and scope", ex);
+            log.error("error getting policies by tenant ID and scope", ex);
             throw new LibraDAOException("error getting policies by tenant ID and scope", ex);
         }
     }
@@ -167,7 +165,7 @@ public class PolicyDAO extends BaseDAO {
             };
             return queryExecutor.query(GET_APPLICABLE_POLICIES, rowMapper, params);
         } catch (Exception ex) {
-            logger.error("error getting applicable policies", ex);
+            log.error("error getting applicable policies", ex);
             throw new LibraDAOException("error getting applicable policies", ex);
         }
     }
@@ -189,7 +187,7 @@ public class PolicyDAO extends BaseDAO {
             }
             return Optional.ofNullable(filterQueryObjects(policies));
         } catch (Exception ex) {
-            logger.error("error updating policy", ex);
+            log.error("error updating policy", ex);
             throw new LibraDAOException("error updating policy", ex);
         }
     }
@@ -203,7 +201,7 @@ public class PolicyDAO extends BaseDAO {
             }
             return Optional.ofNullable(filterQueryObjects(policies));
         } catch (Exception ex) {
-            logger.error("error updating policy status", ex);
+            log.error("error updating policy status", ex);
             throw new LibraDAOException("error updating policy status", ex);
         }
     }
@@ -217,7 +215,7 @@ public class PolicyDAO extends BaseDAO {
                     atEpochMillis
             );
         } catch (Exception ex) {
-            logger.error("error expiring policies", ex);
+            log.error("error expiring policies", ex);
             throw new LibraDAOException("error expiring policies", ex);
         }
     }
