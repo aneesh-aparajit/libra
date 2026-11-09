@@ -4,14 +4,14 @@ import dev.tsukuyomi.libra.domain.entity.Policy;
 import dev.tsukuyomi.libra.domain.enums.JsIdenfier;
 import dev.tsukuyomi.libra.exeception.LibraEvaluationException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
 import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.ResourceLimits;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.Executors;
@@ -19,11 +19,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
+@Primary
 @Service
 @RequiredArgsConstructor
 public class GraalJSPolicyEngine implements IPolicyEngine, AutoCloseable {
-
-    private static final Logger logger = LoggerFactory.getLogger(GraalJSPolicyEngine.class);
 
     private static final Engine ENGINE = Engine.newBuilder("js")
             .option("engine.WarnInterpreterOnly", "false")
@@ -61,7 +61,7 @@ public class GraalJSPolicyEngine implements IPolicyEngine, AutoCloseable {
         } catch (PolyglotException ex) {
             handlePolyglotException(ex);
         } catch (Exception ex) {
-            logger.error("error evaluating policy evaluator", ex);
+            log.error("error evaluating policy evaluator", ex);
             throw new LibraEvaluationException("error evaluating policy evaluator", ex);
         } finally {
             kill.cancel(true);
@@ -77,11 +77,11 @@ public class GraalJSPolicyEngine implements IPolicyEngine, AutoCloseable {
 
     private void handlePolyglotException(PolyglotException ex) {
         if (ex.isCancelled()) {
-            logger.error("js execution was cancelled", ex);
+            log.error("js execution was cancelled", ex);
             throw new LibraEvaluationException("js execution was cancelled", ex);
         }
         if (ex.isResourceExhausted()) {
-            logger.error("js resource exhausted", ex);
+            log.error("js resource exhausted", ex);
             throw new LibraEvaluationException("js resource exhausted", ex);
         }
         throw new LibraEvaluationException("error evaluating policy", ex);
@@ -89,7 +89,7 @@ public class GraalJSPolicyEngine implements IPolicyEngine, AutoCloseable {
 
     private void handleNonBooleanResponse(Value result) {
         if (!result.isBoolean()) {
-            logger.error("evaluate() must return a boolean");
+            log.error("evaluate() must return a boolean");
             throw new LibraEvaluationException("evaluate() must return a boolean");
         }
     }
@@ -97,7 +97,7 @@ public class GraalJSPolicyEngine implements IPolicyEngine, AutoCloseable {
     private Value getEvaluateFn(Context ctx) {
         Value evaluate = ctx.getBindings("js").getMember("evaluate");
         if (evaluate == null || !evaluate.canExecute()) {
-            logger.error("evaluate() function does not exist");
+            log.error("evaluate() function does not exist");
             throw new LibraEvaluationException("evaluate() function does not exist");
         }
         return evaluate;

@@ -5,8 +5,7 @@ import dev.tsukuyomi.libra.dao.executor.QueryExecutor;
 import dev.tsukuyomi.libra.domain.entity.Scope;
 import dev.tsukuyomi.libra.exeception.LibraDAOException;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,11 +16,10 @@ import static dev.tsukuyomi.libra.utils.Constants.ScopeDAOConstants.SCOPE_NAME;
 import static dev.tsukuyomi.libra.utils.Constants.ScopeDAOConstants.TABLE_NAME;
 import static dev.tsukuyomi.libra.utils.Constants.ScopeDAOConstants.TENANT_ID;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class ScopeDAO extends BaseDAO {
-
-    private static final Logger logger = LoggerFactory.getLogger(ScopeDAO.class);
 
     private static final String CREATE_SCOPE_SQL = String.format(
             "INSERT INTO %s(%s, %s) VALUES(?, ?) RETURNING *",
@@ -56,7 +54,7 @@ public class ScopeDAO extends BaseDAO {
             List<Scope> scopes = queryExecutor.query(CREATE_SCOPE_SQL, rowMapper, params);
             return filterQueryObjects(scopes);
         } catch (Exception ex) {
-            logger.error("error creating scope", ex);
+            log.error("error creating scope", ex);
             throw new LibraDAOException("error creating scope", ex);
         }
     }
@@ -72,7 +70,7 @@ public class ScopeDAO extends BaseDAO {
             }
             return Optional.ofNullable(filterQueryObjects(scopes));
         } catch (Exception ex) {
-            logger.error("error getting scope", ex);
+            log.error("error getting scope", ex);
             throw new LibraDAOException("error getting scope", ex);
         }
     }
@@ -82,7 +80,7 @@ public class ScopeDAO extends BaseDAO {
             Object[] params = new Object[]{tenantID};
             return queryExecutor.query(GET_SCOPES_BY_TENANT_ID, rowMapper, params);
         } catch (Exception ex) {
-            logger.error("error getting scopes", ex);
+            log.error("error getting scopes", ex);
             throw new LibraDAOException("error getting scopes", ex);
         }
     }
@@ -96,7 +94,7 @@ public class ScopeDAO extends BaseDAO {
             }
             return Optional.ofNullable(filterQueryObjects(scopes));
         } catch (Exception ex) {
-            logger.error("error getting scope", ex);
+            log.error("error getting scope", ex);
             throw new LibraDAOException("error getting scope", ex);
         }
     }

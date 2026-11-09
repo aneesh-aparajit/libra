@@ -5,8 +5,7 @@ import dev.tsukuyomi.libra.dao.executor.QueryExecutor;
 import dev.tsukuyomi.libra.domain.entity.Tenant;
 import dev.tsukuyomi.libra.exeception.LibraDAOException;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,11 +16,10 @@ import static dev.tsukuyomi.libra.utils.Constants.TenantDAOConstants.TABLE_NAME;
 import static dev.tsukuyomi.libra.utils.Constants.TenantDAOConstants.TENANT_CODE;
 import static dev.tsukuyomi.libra.utils.Constants.TenantDAOConstants.TENANT_NAME;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class TenantDAO extends BaseDAO {
-
-    private static final Logger logger = LoggerFactory.getLogger(TenantDAO.class);
 
     private static final String CREATE_TENANT_SQL = String.format(
             "INSERT INTO %s(%s, %s) VALUES(?, ?) RETURNING *",
@@ -51,7 +49,7 @@ public class TenantDAO extends BaseDAO {
             List<Tenant> tenants = queryExecutor.query(CREATE_TENANT_SQL, rowMapper, params);
             return filterQueryObjects(tenants);
         } catch (Exception ex) {
-            logger.error("error creating tenant", ex);
+            log.error("error creating tenant", ex);
             throw new LibraDAOException("error creating tenant", ex);
         }
     }
@@ -65,7 +63,7 @@ public class TenantDAO extends BaseDAO {
             }
             return Optional.ofNullable(filterQueryObjects(tenants));
         } catch (Exception ex) {
-            logger.error("error getting tenant by ID", ex);
+            log.error("error getting tenant by ID", ex);
             throw new LibraDAOException("error getting tenant by ID", ex);
         }
     }
@@ -79,7 +77,7 @@ public class TenantDAO extends BaseDAO {
             }
             return Optional.ofNullable(filterQueryObjects(tenants));
         } catch (Exception ex) {
-            logger.error("error getting tenant by code", ex);
+            log.error("error getting tenant by code", ex);
             throw new LibraDAOException("error getting tenant by code", ex);
         }
     }

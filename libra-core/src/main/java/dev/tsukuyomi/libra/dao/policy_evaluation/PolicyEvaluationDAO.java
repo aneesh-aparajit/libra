@@ -5,8 +5,7 @@ import dev.tsukuyomi.libra.dao.executor.QueryExecutor;
 import dev.tsukuyomi.libra.domain.entity.PolicyEvaluation;
 import dev.tsukuyomi.libra.exeception.LibraDAOException;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -25,11 +24,10 @@ import static dev.tsukuyomi.libra.utils.Constants.PolicyEvaluationDAOConstants.R
 import static dev.tsukuyomi.libra.utils.Constants.PolicyEvaluationDAOConstants.TABLE_NAME;
 import static dev.tsukuyomi.libra.utils.JdbcUtil.getJsonPGObject;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class PolicyEvaluationDAO extends BaseDAO {
-
-    private static final Logger logger = LoggerFactory.getLogger(PolicyEvaluationDAO.class);
 
     private static final String INSERT_PREFIX = String.format(
             "INSERT INTO %s(%s, %s, %s, %s, %s, %s) VALUES",
@@ -72,7 +70,7 @@ public class PolicyEvaluationDAO extends BaseDAO {
                     CREATE_POLICY_EVALUATION_SQL, rowMapper, toParams(evaluation));
             return filterQueryObjects(evaluations);
         } catch (Exception ex) {
-            logger.error("error creating policy evaluation", ex);
+            log.error("error creating policy evaluation", ex);
             throw new LibraDAOException("error creating policy evaluation", ex);
         }
     }
@@ -93,7 +91,7 @@ public class PolicyEvaluationDAO extends BaseDAO {
             }
             return created;
         } catch (Exception ex) {
-            logger.error("error creating policy evaluations", ex);
+            log.error("error creating policy evaluations", ex);
             throw new LibraDAOException("error creating policy evaluations", ex);
         }
     }
@@ -107,7 +105,7 @@ public class PolicyEvaluationDAO extends BaseDAO {
             }
             return Optional.ofNullable(filterQueryObjects(evaluations));
         } catch (Exception ex) {
-            logger.error("error getting policy evaluation by ID", ex);
+            log.error("error getting policy evaluation by ID", ex);
             throw new LibraDAOException("error getting policy evaluation by ID", ex);
         }
     }
@@ -117,7 +115,7 @@ public class PolicyEvaluationDAO extends BaseDAO {
             Object[] params = new Object[]{requestID};
             return queryExecutor.query(GET_POLICY_EVALUATIONS_BY_REQUEST_ID, rowMapper, params);
         } catch (Exception ex) {
-            logger.error("error getting policy evaluations by request ID", ex);
+            log.error("error getting policy evaluations by request ID", ex);
             throw new LibraDAOException("error getting policy evaluations by request ID", ex);
         }
     }
@@ -127,7 +125,7 @@ public class PolicyEvaluationDAO extends BaseDAO {
             Object[] params = new Object[]{entityID};
             return queryExecutor.query(GET_POLICY_EVALUATIONS_BY_ENTITY_ID, rowMapper, params);
         } catch (Exception ex) {
-            logger.error("error getting policy evaluations by entity ID", ex);
+            log.error("error getting policy evaluations by entity ID", ex);
             throw new LibraDAOException("error getting policy evaluations by entity ID", ex);
         }
     }
@@ -137,7 +135,7 @@ public class PolicyEvaluationDAO extends BaseDAO {
             Object[] params = new Object[]{policyID};
             return queryExecutor.query(GET_POLICY_EVALUATIONS_BY_POLICY_ID, rowMapper, params);
         } catch (Exception ex) {
-            logger.error("error getting policy evaluations by policy ID", ex);
+            log.error("error getting policy evaluations by policy ID", ex);
             throw new LibraDAOException("error getting policy evaluations by policy ID", ex);
         }
     }
